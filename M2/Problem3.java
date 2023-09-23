@@ -25,6 +25,35 @@ public class Problem3 {
         //set the result to the proper index of the output array
         //hint: don't forget to handle the data types properly, the result datatype should be the same as the original datatype
         
+        // shc4 it114-005 9/22/23
+        // Links: (Sources that I used for this problem)
+        // 1) Math functions: https://www.w3schools.com/java/java_ref_math.asp
+        // 2) Converting String to int: https://www.freecodecamp.org/news/java-string-to-int-how-to-convert-a-string-to-an-integer/
+        // 3) Casting Wrappers into primitives: https://www.tutorialspoint.com/how-to-convert-wrapper-objects-to-primitive-types-in-java
+        // 4) .getClass().getSimpleName(): https://www.tutorialspoint.com/java/lang/class_getsimplename.htm
+        /* This for-loop iterates through each array. Depending on which datatype the iteration is on, it would go
+         * through converting it to a primitive and use math.abs() to get a positive number. 
+         * Another variable is made to put it back to its initial Wrapper or String datatype. 
+         * Also it is placed into the new object array with its original datatype.
+        */
+        System.out.println("Positive output: ");
+        for(int i = 0; i < arr.length; i++){
+            if(arr[i].getClass().getSimpleName().equals("Integer")){
+                int x = Math.abs((int)arr[i]);
+                Integer y = new Integer(x);
+                output[i] = y;
+                }
+            else if(arr[i].getClass().getSimpleName().equals("Double")){
+                double x = Math.abs((double)arr[i]);
+                Double y = new Double(x);
+                output[i] = y;
+            }
+            else if(arr[i].getClass().getSimpleName().equals("String")){
+                int x = Math.abs(Integer.parseInt((String)arr[i]));
+                String y = "" + x;
+                output[i] = y;
+            }
+        }
         //end edit section
 
         StringBuilder sb = new StringBuilder();

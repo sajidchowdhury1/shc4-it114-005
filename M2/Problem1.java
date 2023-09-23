@@ -21,6 +21,16 @@ public class Problem1 {
         //hint: use the arr variable; don't diretly use the a1-a4 variables
         //TODO add/edit code here
         
+        // shc4, it114-005, 9/19/23
+        /* This for-loop is going through the integers in the array 
+         * and seeing if the remainder comes out to be 1 to indicate
+         * it is odd.
+        */
+        for(int i = 0; i < arr.length; i++){
+            if(arr[i]%2 == 1){
+                System.out.print(arr[i] + " ");
+            }
+        }
         //end add/edit section
         System.out.println();
         System.out.println("End process");
