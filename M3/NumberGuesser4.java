@@ -132,6 +132,9 @@ public class NumberGuesser4 {
             pickNewRandom = true;
         } else {
             System.out.println("That's wrong");
+            // shc4 9/29/23 it114-005
+            // adding method for higher or lower hint here
+            hint(guess);
             strikes++;
             if (strikes >= maxStrikes) {
                 lose();
@@ -155,6 +158,10 @@ public class NumberGuesser4 {
     public void start() {
         try (Scanner input = new Scanner(System.in);) {
             System.out.println("Welcome to NumberGuesser4.0");
+            // shc4 10/1/23 it114-005
+            // this implements the difficulty slider
+            // so the users can pick how many max strikes they have
+            difficulty(input);
             System.out.println("To exit, type the word 'quit'.");
             loadState();
             do {
@@ -186,6 +193,56 @@ public class NumberGuesser4 {
         }
         System.out.println("Thanks for playing!");
     }
+
+    // shc4 9/29/23 it114-005
+    // starting here
+    // This is the hint method to help guess
+    // higher or lower
+    private void hint(int num){
+        if(num > number){
+            // guess is to low from the random number
+            System.out.println("Lower");
+        }
+        else if(num < number){
+            // guess is to high from the random number
+            System.out.println("Higher");
+        }
+    }
+    
+    // shc4 10/1/23 it114-005
+    // difficulty sector 
+    // This is used to select the difficulty to change max strikes of the game 
+    // Links: String methods: https://www.w3schools.com/java/java_ref_string.asp
+    private void difficulty(Scanner i){
+        System.out.println("Select Difficulty by typing (\"Easy\", \"Medium\", \"Hard\")");
+            while(true){
+                String mode = i.nextLine();
+                
+                if(mode.trim().toUpperCase().equals("EASY")){
+                    //easy gives 10 chance to the user
+                    this.maxStrikes = 10;
+                    System.out.println("Easy was selected: You have 10 tries!");
+                    break;
+                }
+                else if(mode.trim().toUpperCase().equals("MEDIUM")){
+                    //medium gives 5 chances for the user
+                    this.maxStrikes = 5;
+                    System.out.println("Medium was selected: You have 5 tries!");
+                    break;
+                }
+                else if(mode.trim().toUpperCase().equals("HARD")){
+                    //hard only gives 1 chance for the user
+                    this.maxStrikes = 1;
+                    System.out.println("Hard was selected: You have 1 try!");
+                    break;
+                }
+                else{
+                    // this message is prinited once the user types the string in correctly
+                    System.out.println("Error: did not type mode correctly. \nTry again (Easy, Medium, Hard): ");
+                }
+            }
+    }
+    
 
     public static void main(String[] args) {
         NumberGuesser4 ng = new NumberGuesser4();
