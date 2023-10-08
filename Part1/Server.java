@@ -1,4 +1,4 @@
-package Part3HW.Part2;
+package Part1;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,17 +29,8 @@ public class Server {
                 if ("kill server".equalsIgnoreCase(fromClient)) {
                     System.out.println("Client killed server");
                     break;
-                } else if(fromClient.startsWith("reverse")){
-                    System.out.println("From Client: " + fromClient);
-                    StringBuilder sb = new StringBuilder(fromClient.replace("reverse ",""));
-                    sb.reverse();
-                    String rev = sb.toString();
-                    System.out.println("To client: " + rev);
-                    out.println(rev);
-                }
-                else {
+                } else {
                     System.out.println("From client: " + fromClient);
-                    out.println(fromClient);
                 }
             }
         } catch (IOException e) {
