@@ -1,4 +1,4 @@
-package Project.server;
+package CR.server;
 
 public class GameRoom extends Room {
 
