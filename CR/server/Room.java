@@ -118,7 +118,43 @@ public class Room implements AutoCloseable{
 						wasCommand = false;
 						break;
 				}
+				// shc4 10/27/23 IT114-005
+				// coin flip
+				if(message.trim().startsWith("/flip")){
+					int coin = (int) (Math.random()*2); 
+						if(coin == 0){
+							client.sendMessage(client.getClientName(),"Did a coin flip and landed on Heads");
+						}
+						else if(coin == 1){
+							client.sendMessage(client.getClientName(),"Did a coin flip and landed on Tails");
+						}
+						return true;
+				}
+				// roll multiple dice with multiple sides (format 2)
+				// Link: https://www.w3schools.com/java/ref_string_contains.asp used to figure out .contains method
+				else if(message.trim().startsWith("/roll")){
+					int total = 0;
+					try{
+						if(message.trim().split(" ")[1].contains("d")){
+							String numberOfDice = message.split(" ")[1].split("d")[0];
+							String sidesOfDice = message.split(" ")[1].split("d")[1];
 
+							for(int i = 0; i < Integer.parseInt(numberOfDice); i++){
+								int rollDice = (int) (Math.random()*Integer.parseInt(sidesOfDice))+1;
+								total += rollDice;
+							}
+							client.sendMessage(client.getClientName(), String.format("Did a roll of %sd%s and got a total roll of %s", numberOfDice, sidesOfDice, total));
+						} 
+						else{
+							int value = Integer.parseInt(message.trim().split(" ")[1]);
+							int singleDiceRoll = (int) (Math.random()*value)+1;
+							client.sendMessage(client.getClientName(), String.format("The dice rolls from a range of 1-%s and the result is %s", value, singleDiceRoll));
+						}
+						return true;
+					}catch(Exception e){
+						client.sendMessage(null,"invalid input");
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -169,6 +205,10 @@ public class Room implements AutoCloseable{
 		
 		String from = (sender == null ? "Room" : sender.getClientName());
 		Iterator<ServerThread> iter = clients.iterator();
+		// shc4 10/20/23 it114-005
+		// formatting
+		
+
 		while (iter.hasNext()) {
 			ServerThread client = iter.next();
 			boolean messageSent = client.sendMessage(from, message);
