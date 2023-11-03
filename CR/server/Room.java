@@ -207,6 +207,21 @@ public class Room implements AutoCloseable{
 		Iterator<ServerThread> iter = clients.iterator();
 		// shc4 10/20/23 it114-005
 		// formatting
+		if(message.contains("**")){
+			message = message.replace("**", "<b>");
+			String[] message2 = message.split(" ");
+			int count = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("<b>")){
+					count++;
+				}
+				if(count==2){
+					message2[i].replace("<b>", "</b>");
+					count = 0;
+				}
+			}
+		}
+		
 		
 
 		while (iter.hasNext()) {
