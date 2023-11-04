@@ -207,23 +207,37 @@ public class Room implements AutoCloseable{
 		Iterator<ServerThread> iter = clients.iterator();
 		// shc4 10/20/23 it114-005
 		// formatting
-		if(message.contains("**")){
-			message = message.replace("**", "<b>");
-			String[] message2 = message.split(" ");
+		// I had support from Danny
+		if(message.contains("*")){
+			String[] message2 = message.split("");
+			message = "";
 			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
 			for(int i = 0; i < message2.length; i++){
-				if(message2[i].equals("<b>")){
+				if (message2[i].equals("*")){
 					count++;
-				}
-				if(count==2){
-					message2[i].replace("<b>", "</b>");
-					count = 0;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<b>";
+					}
+					
+					if (count == 2){
+						message2[i] = "</b>";
+						count = 0;
+					}
 				}
 			}
+			if(check % 2 == 1){
+				message2[trackIndex] = "*";
+			}
+			for(String i: message2){
+				message += i;
+			}
+
 		}
 		
-		
-
 		while (iter.hasNext()) {
 			ServerThread client = iter.next();
 			boolean messageSent = client.sendMessage(from, message);
@@ -232,6 +246,8 @@ public class Room implements AutoCloseable{
 			}
 		}
 	}
+
+
 	protected synchronized void sendConnectionStatus(ServerThread sender, boolean isConnected){
 		Iterator<ServerThread> iter = clients.iterator();
 		while (iter.hasNext()) {
