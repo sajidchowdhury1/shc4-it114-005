@@ -208,6 +208,20 @@ public class Room implements AutoCloseable{
 		// shc4 10/20/23 it114-005
 		// formatting
 		// I had support from Danny
+		message = convertMessage(message);
+		
+		while (iter.hasNext()) {
+			ServerThread client = iter.next();
+			boolean messageSent = client.sendMessage(from, message);
+			if (!messageSent) {
+				handleDisconnect(iter, client);
+			}
+		}
+	}
+	// shc4 11/5/23 it114-005
+	// method for formatting all
+	private String convertMessage(String message){
+		// bold formatting '*'
 		if(message.contains("*")){
 			String[] message2 = message.split("");
 			message = "";
@@ -215,6 +229,12 @@ public class Room implements AutoCloseable{
 			int check = 0;
 			int trackIndex = 0;
 			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
 				if (message2[i].equals("*")){
 					count++;
 					check++;
@@ -235,18 +255,141 @@ public class Room implements AutoCloseable{
 			for(String i: message2){
 				message += i;
 			}
-
+			return message;
 		}
-		
-		while (iter.hasNext()) {
-			ServerThread client = iter.next();
-			boolean messageSent = client.sendMessage(from, message);
-			if (!messageSent) {
-				handleDisconnect(iter, client);
+		// formatting for italics '-'
+		if(message.contains("-")){
+			String[] message2 = message.split("");
+			message = "";
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
+				if (message2[i].equals("-")){
+					count++;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<i>";
+					}
+					
+					if (count == 2){
+						message2[i] = "</i>";
+						count = 0;
+					}
+				}
 			}
+			if(check % 2 == 1){
+				message2[trackIndex] = "-";
+			}
+			for(String i: message2){
+				message += i;
+			}
+			return message;
 		}
-	}
+		// formatting for underline '_'
+		if(message.contains("_")){
+			String[] message2 = message.split("");
+			message = "";
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
+				if (message2[i].equals("_")){
+					count++;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<u>";
+					}
+					
+					if (count == 2){
+						message2[i] = "</u>";
+						count = 0;
+					}
+				}
+			}
+			if(check % 2 == 1){
+				message2[trackIndex] = "_";
+			}
+			for(String i: message2){
+				message += i;
+			}
+			return message;
+		}
+		// color support RGB
+		if(message.contains("&")){
+			String[] message2 = message.split("");
+			message = "";
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("&")){
+					message2[i] = "";
+					if(message2[i+1].equals("r")){
+						count++;
+						check++;
+						if(count == 1){
+							trackIndex = i;
+							message2[i+1] = "<font color=\"red\">";
+						}
+						
+						if (count == 2){
+							message2[i] = "</font>";
+							count = 0;
+						}
+					}
+					if(message2[i+1].equals("g")){
+						count++;
+						check++;
+						if(count == 1){
+							trackIndex = i;
+							message2[i] = "<font color=\"green\">";
+						}
+						
+						if (count == 2){
+							message2[i] = "</font>";
+							count = 0;
+						}
+					}
+					if(message2[i+1].equals("b")){
+						count++;
+						check++;
+						if(count == 1){
+							trackIndex = i;
+							message2[i] = "<font color=\"blue\">";
+						}
+						
+						if (count == 2){
+							message2[i] = "</font>";
+							count = 0;
+						}
 
+					}
+				}
+			}
+			for(String i: message2){
+				message += i;
+			}
+			return message;
+
+		}
+
+		return message;
+	}
 
 	protected synchronized void sendConnectionStatus(ServerThread sender, boolean isConnected){
 		Iterator<ServerThread> iter = clients.iterator();
