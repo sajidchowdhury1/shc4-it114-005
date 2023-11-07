@@ -220,6 +220,7 @@ public class Room implements AutoCloseable{
 	}
 	// shc4 11/5/23 it114-005
 	// method for formatting all
+	// Had support from Danny
 	private String convertMessage(String message){
 		// bold formatting '*'
 		if(message.contains("*")){
@@ -330,56 +331,76 @@ public class Room implements AutoCloseable{
 			return message;
 		}
 		// color support RGB
+		// Link: https://www.freecodecamp.org/news/how-to-change-text-color-in-html/
 		if(message.contains("&")){
 			String[] message2 = message.split("");
 			message = "";
-			int count = 0;
-			int check = 0;
-			int trackIndex = 0;
+			int count = 0; // tracks the pair of tags
+			int checkr = 0; // checks how many times the color red tag occurs
+			int checkg = 0; // checks how many times the color green tag occurs
+			int checkb = 0; // checks how many times the color blue tag occurs
+			int trackIndexR = 0;
+			int trackIndexG = 0;
+			int trackIndexB = 0;
 			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
 				if(message2[i].equals("&")){
 					message2[i] = "";
 					if(message2[i+1].equals("r")){
 						count++;
-						check++;
+						checkr++;
 						if(count == 1){
-							trackIndex = i;
+							trackIndexR = i+1;
 							message2[i+1] = "<font color=\"red\">";
 						}
 						
 						if (count == 2){
-							message2[i] = "</font>";
+							message2[i+1] = "</font>";
 							count = 0;
 						}
 					}
 					if(message2[i+1].equals("g")){
 						count++;
-						check++;
+						checkg++;
 						if(count == 1){
-							trackIndex = i;
-							message2[i] = "<font color=\"green\">";
+							trackIndexG = i+1;
+							message2[i+1] = "<font color=\"green\">";
 						}
 						
 						if (count == 2){
-							message2[i] = "</font>";
+							message2[i=1] = "</font>";
 							count = 0;
 						}
 					}
 					if(message2[i+1].equals("b")){
 						count++;
-						check++;
+						checkb++;
 						if(count == 1){
-							trackIndex = i;
-							message2[i] = "<font color=\"blue\">";
+							trackIndexB = i+1;
+							message2[i+1] = "<font color=\"blue\">";
 						}
 						
 						if (count == 2){
-							message2[i] = "</font>";
+							message2[i+1] = "</font>";
 							count = 0;
 						}
 
 					}
 				}
+			}
+			if(checkr % 2 == 1){
+				message2[trackIndexR] = "&r";
+			}
+			if(checkg % 2 == 1){
+				message2[trackIndexG] = "&g";
+			}
+			if(checkb % 2 == 1){
+				message2[trackIndexB] = "&b";
 			}
 			for(String i: message2){
 				message += i;
