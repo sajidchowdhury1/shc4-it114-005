@@ -78,7 +78,9 @@ public class ServerThread extends Thread {
     }
 
     // send methods
-
+    // shc4 11/11/23 it114-005
+    // These payloads were given with the milestone2 prep
+    // sendReadyStatus would send a payload showing which client is ready and active 
     public boolean sendReadyStatus(long clientId) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.READY);
@@ -86,6 +88,8 @@ public class ServerThread extends Thread {
         return send(p);
     }
 
+    // shc4 11/11/23 it114-005
+    // This one payload will be the name of the room
     public boolean sendRoomName(String name) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.JOIN_ROOM);
@@ -102,6 +106,8 @@ public class ServerThread extends Thread {
         return send(payload);
     }
 
+    // shc4 11/11/23 it114-005
+    // This will will send the client Id and the client name
     public boolean sendExistingClient(long clientId, String clientName) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.SYNC_CLIENT);
@@ -110,12 +116,16 @@ public class ServerThread extends Thread {
         return send(p);
     }
 
+    // shc4 11/11/23 it114-005
+    // This will send and handle data of the users list and have only people that are active
     public boolean sendResetUserList() {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.RESET_USER_LIST);
         return send(p);
     }
 
+    // shc4 11/11/23 it114-005
+    // This is to send and handle the ID of the client
     public boolean sendClientId(long id) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.CLIENT_ID);
@@ -123,6 +133,8 @@ public class ServerThread extends Thread {
         return send(p);
     }
 
+    // shc4 11/11/23 it114-005
+    // this handles th client who is sending a message and also the message that is being sent
     public boolean sendMessage(long clientId, String message) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.MESSAGE);
@@ -131,6 +143,8 @@ public class ServerThread extends Thread {
         return send(p);
     }
 
+    // shc4 11/11/23 it114-005
+    // These payloads will handle who is connected and disconnected in a room
     public boolean sendConnectionStatus(long clientId, String who, boolean isConnected) {
         Payload p = new Payload();
         p.setPayloadType(isConnected ? PayloadType.CONNECT : PayloadType.DISCONNECT);
@@ -188,6 +202,9 @@ public class ServerThread extends Thread {
         }
     }
 
+    // shc4 11/11/23 it114-005
+    // this works with the different types of payload depending on what the user does
+    // so it has connect, disconnect, and other payloads the is helpful for the user
     void processPayload(Payload p) {
         switch (p.getPayloadType()) {
             case CONNECT:
