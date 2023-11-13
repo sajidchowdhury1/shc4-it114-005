@@ -21,7 +21,7 @@ public class Room implements AutoCloseable {
     private final static String DISCONNECT = "disconnect";
     private final static String LOGOUT = "logout";
     private final static String LOGOFF = "logoff";
-    // shc4 11/8/23 shc4
+    // shc4 11/8/23 it114-005
     private final static String FLIP = "flip";
     private final static String ROLL = "roll";
     private static Logger logger = Logger.getLogger(Room.class.getName());
@@ -234,7 +234,14 @@ public class Room implements AutoCloseable {
         // shc4 11/8/23 it114-005
 		// formatting
 		// I had support from Danny
-		message = convertMessage(message);
+		message = convertMessageBold(message); // use *
+        message = ConvertMessageItalics(message); // use -
+        message = ConvertMessageUnderline(message); // use _
+        message = ConvertMessageRed(message); // use &
+        message = ConvertMessageGreen(message); // use %
+        message = ConvertMessageBlue(message); // use #
+
+
 
         while (iter.hasNext()) {
             ServerThread client = iter.next();
@@ -246,9 +253,9 @@ public class Room implements AutoCloseable {
     }
 
     // shc4 11/8/23 it114-005
-	// method for formatting all
+	// method for formatting for bold
 	// Had support from Danny
-    private String convertMessage(String message){
+    private String convertMessageBold(String message){
 		// bold formatting '*'
 		if(message.contains("*")){
 			String[] message2 = message.split("");
@@ -285,7 +292,13 @@ public class Room implements AutoCloseable {
 			}
 			return message;
 		}
-		// formatting for italics '-'
+		return message;
+	}
+
+    // shc4 11/12/23 it114-005
+	// method for formatting for Italics
+    private String ConvertMessageItalics(String message){
+        // formatting for italics '-'
 		if(message.contains("-")){
 			String[] message2 = message.split("");
 			message = "";
@@ -321,7 +334,12 @@ public class Room implements AutoCloseable {
 			}
 			return message;
 		}
-		// formatting for underline '_'
+        return message;
+    }
+    // shc4 11/12/23 it114-005
+	// method for formatting for underline
+    private String ConvertMessageUnderline(String message){
+        // formatting for underline '_'
 		if(message.contains("_")){
 			String[] message2 = message.split("");
 			message = "";
@@ -357,18 +375,20 @@ public class Room implements AutoCloseable {
 			}
 			return message;
 		}
-		// color support RGB
-		// Link: https://www.freecodecamp.org/news/how-to-change-text-color-in-html/
-		if(message.contains("&")){
+        return message;
+    }
+
+    // shc4 11/12/23 it114-005
+	// method for formatting to the color red
+    // color support RGB
+	// Link: https://www.freecodecamp.org/news/how-to-change-text-color-in-html/
+    private String ConvertMessageRed(String message){
+        if(message.contains("&")){
 			String[] message2 = message.split("");
 			message = "";
-			int count = 0; // tracks the pair of tags
-			int checkr = 0; // checks how many times the color red tag occurs
-			int checkg = 0; // checks how many times the color green tag occurs
-			int checkb = 0; // checks how many times the color blue tag occurs
-			int trackIndexR = 0;
-			int trackIndexG = 0;
-			int trackIndexB = 0;
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
 			for(int i = 0; i < message2.length; i++){
 				if(message2[i].equals("\\")){
 					// this allows the user to keep their symbols if they wish to do so
@@ -376,68 +396,112 @@ public class Room implements AutoCloseable {
 					i++;
 					continue;
 				}
-				if(message2[i].equals("&")){
-					message2[i] = "";
-					if(message2[i+1].equals("r")){
-						count++;
-						checkr++;
-						if(count == 1){
-							trackIndexR = i+1;
-							message2[i+1] = "<font color=\"red\">";
-						}
-						
-						if (count == 2){
-							message2[i+1] = "</font>";
-							count = 0;
-						}
+				if (message2[i].equals("&")){
+					count++;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<font color=\"red\">";
 					}
-					if(message2[i+1].equals("g")){
-						count++;
-						checkg++;
-						if(count == 1){
-							trackIndexG = i+1;
-							message2[i+1] = "<font color=\"green\">";
-						}
-						
-						if (count == 2){
-							message2[i=1] = "</font>";
-							count = 0;
-						}
-					}
-					if(message2[i+1].equals("b")){
-						count++;
-						checkb++;
-						if(count == 1){
-							trackIndexB = i+1;
-							message2[i+1] = "<font color=\"blue\">";
-						}
-						
-						if (count == 2){
-							message2[i+1] = "</font>";
-							count = 0;
-						}
-
+					
+					if (count == 2){
+						message2[i] = "</font>";
+						count = 0;
 					}
 				}
 			}
-			if(checkr % 2 == 1){
-				message2[trackIndexR] = "&r";
-			}
-			if(checkg % 2 == 1){
-				message2[trackIndexG] = "&g";
-			}
-			if(checkb % 2 == 1){
-				message2[trackIndexB] = "&b";
+			if(check % 2 == 1){
+				message2[trackIndex] = "&";
 			}
 			for(String i: message2){
 				message += i;
 			}
 			return message;
-
 		}
-
 		return message;
-	}
+    }
+    // shc4 11/12/23 it114-005
+	// method for formatting to the color green
+    // color support RGB
+    private String ConvertMessageGreen(String message){
+        if(message.contains("%")){
+			String[] message2 = message.split("");
+			message = "";
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
+				if (message2[i].equals("%")){
+					count++;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<font color=\"green\">";
+					}
+					
+					if (count == 2){
+						message2[i] = "</font>";
+						count = 0;
+					}
+				}
+			}
+			if(check % 2 == 1){
+				message2[trackIndex] = "%";
+			}
+			for(String i: message2){
+				message += i;
+			}
+			return message;
+		}
+		return message;
+    }
+    // shc4 11/12/23 it114-005
+	// method for formatting to the color blue
+    // color support RGB
+    private String ConvertMessageBlue(String message){
+        if(message.contains("#")){
+			String[] message2 = message.split("");
+			message = "";
+			int count = 0;
+			int check = 0;
+			int trackIndex = 0;
+			for(int i = 0; i < message2.length; i++){
+				if(message2[i].equals("\\")){
+					// this allows the user to keep their symbols if they wish to do so
+					message2[i] = "";
+					i++;
+					continue;
+				}
+				if (message2[i].equals("#")){
+					count++;
+					check++;
+					if(count == 1){
+						trackIndex = i;
+						message2[i] = "<font color=\"blue\">";
+					}
+					
+					if (count == 2){
+						message2[i] = "</font>";
+						count = 0;
+					}
+				}
+			}
+			if(check % 2 == 1){
+				message2[trackIndex] = "#";
+			}
+			for(String i: message2){
+				message += i;
+			}
+			return message;
+		}
+		return message;
+    }
 
     protected synchronized void sendConnectionStatus(ServerThread sender, boolean isConnected) {
         Iterator<ServerThread> iter = clients.iterator();
