@@ -8,4 +8,14 @@
 ./common/Constants.java
 ./client/Client.java
 ./client/IClientEvents.java
+./client/ClientUtils.java
+./client/Card.java
+./client/ICardControls.java
 ./client/ClientUI.java
+./client/views/UserInputPanel.java
+./client/views/Menu.java
+./client/views/ChatPanel.java
+./client/views/RoomsPanel.java
+./client/views/ConnectionPanel.java
+./client/views/UserListPanel.java
+./client/views/RoomListItem.java
