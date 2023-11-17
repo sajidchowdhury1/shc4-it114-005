@@ -202,6 +202,10 @@ public class ServerThread extends Thread {
         }
     }
 
+    // shc4 11/16/23 it114-005
+    // this payload will handle the mute people
+    
+
     // shc4 11/11/23 it114-005
     // this works with the different types of payload depending on what the user does
     // so it has connect, disconnect, and other payloads the is helpful for the user

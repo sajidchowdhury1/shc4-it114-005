@@ -5,5 +5,5 @@ public enum PayloadType {
     // These are the payloads that come with the milestone 2 prep
     CONNECT, DISCONNECT, MESSAGE, CLIENT_ID, RESET_USER_LIST,
     SYNC_CLIENT, CREATE_ROOM, JOIN_ROOM, GET_ROOMS,
-    READY
+    READY, MUTE, PRIVATE //Mute is a new payload 
 }

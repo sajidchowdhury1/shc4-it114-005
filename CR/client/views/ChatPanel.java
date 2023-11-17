@@ -152,7 +152,10 @@ public class ChatPanel extends JPanel {
     public void addText(String text) {
         JPanel content = chatArea;
         // add message
-        JEditorPane textContainer = new JEditorPane("text/plain", text);
+        // shc4 11/16/23 it114-005
+        // link: https://docs.oracle.com/javase/8/docs/api/javax/swing/JEditorPane.html
+        // had support from Danny
+        JEditorPane textContainer = new JEditorPane("text/html", text);
 
         // sizes the panel to attempt to take up the width of the container
         // and expand in height based on word wrapping

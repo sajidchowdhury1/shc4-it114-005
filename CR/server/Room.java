@@ -138,10 +138,12 @@ public class Room implements AutoCloseable {
                     // had support from Danny, Daniel, and Yaneli
                         int coin = (int) (Math.random()*2); 
                         if(coin == 0){
-                            sendMessage(null,String.format("%s did a coin flip and landed on Heads", client.getClientName()));
+                            // shc4 11/16/23 it114-005
+                            // has been modified for formatting on ui interface so flip can look different
+                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\"blue\">flip</font><i> and landed on <i><font color=\"green\">Heads</font></i></b>", client.getClientName()));
                         }
                         else if(coin == 1){
-                            sendMessage(null,String.format("%s did a coin flip and landed on Tails", client.getClientName()));
+                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\\\"blue\\\">flip</font><i> and landed on <i><font color=\\\"green\\\">Tails</font></i></b>", client.getClientName()));
                         }
                         break;
                     case ROLL:
@@ -155,16 +157,16 @@ public class Room implements AutoCloseable {
                                     int rollDice = (int) (Math.random()*Integer.parseInt(sidesOfDice))+1;
                                     total += rollDice;
                                 }
-                                sendMessage(null, String.format("%s did a roll of %sd%s and got a total roll of %s", client.getClientName(), numberOfDice, sidesOfDice, total));
+                                sendMessage(null, String.format("<b>%s did a <i><font color=\"red\">roll</font></i> of <u>%sd%s</u> and got a total roll of <font color=\"red\">%s</font></b>", client.getClientName(), numberOfDice, sidesOfDice, total));
                             } 
                             else{
                                 int value = Integer.parseInt(message.trim().split(" ")[1]);
                                 int singleDiceRoll = (int) (Math.random()*value)+1;
-                                sendMessage(null, String.format("%s did a roll with a range of 1-%s and the result is %s", client.getClientName(),value, singleDiceRoll));
+                                sendMessage(null, String.format("<b>%s did a <i><font color=\"red\">roll</font></i> with a range of <u>1-%s</u> and the result is <font color=\"red\">%s</font></b>", client.getClientName(),value, singleDiceRoll));
                             }
                             return true;
                         }catch(Exception e){
-                            sendMessage(null,"invalid input");
+                            sendMessage(null,"<b><font color=\"red\">invalid input</font></b>");
                         }
                         break;
                     default:
