@@ -15,9 +15,10 @@ import javax.swing.JTextField;
 import CR.client.Card;
 import CR.client.ICardControls;
 
-public class UserInputPanel extends JPanel{
-    private static Logger logger = Logger.getLogger(UserInputPanel.class.getName()); 
+public class UserInputPanel extends JPanel {
+    private static Logger logger = Logger.getLogger(UserInputPanel.class.getName());
     private String username;
+
     public UserInputPanel(ICardControls controls) {
         super(new BorderLayout(10, 10));
         JPanel content = new JPanel();
@@ -73,7 +74,8 @@ public class UserInputPanel extends JPanel{
         this.setName(Card.USER_INFO.name());
         controls.addPanel(Card.USER_INFO.name(), this);
     }
-    public String getUsername(){
+
+    public String getUsername() {
         return username;
     }
 }

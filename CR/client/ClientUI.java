@@ -23,8 +23,8 @@ import CR.client.views.ConnectionPanel;
 import CR.client.views.Menu;
 import CR.client.views.RoomsPanel;
 import CR.client.views.UserInputPanel;
-
 import CR.common.Constants;
+
 public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     CardLayout card = null;// accessible so we can call next() and previous()
     Container container;// accessible to be passed to card methods
@@ -62,7 +62,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
                 // System.out.println("Moved to " + e.getComponent().getLocation());
             }
         });
-        
+
         setMinimumSize(new Dimension(400, 400));
         // centers window
         setLocationRelativeTo(null);
@@ -75,9 +75,8 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         csPanel = new ConnectionPanel(this);
         inputPanel = new UserInputPanel(this);
         chatPanel = new ChatPanel(this);
-        
-        roomsPanel = new RoomsPanel(this);
 
+        roomsPanel = new RoomsPanel(this);
 
         // https://stackoverflow.com/a/9093526
         // this tells the x button what to do (updated to be controlled via a prompt)
@@ -86,9 +85,9 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 int response = JOptionPane.showConfirmDialog(container,
-                "Are you sure you want to close this window?", "Close Window?",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                        "Are you sure you want to close this window?", "Close Window?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
                     try {
                         Client.INSTANCE.sendDisconnect();
@@ -103,13 +102,14 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         pack();// tells the window to resize itself and do the layout management
         setVisible(true);
     }
-    void findAndSetCurrentPanel(){
+
+    private void findAndSetCurrentPanel() {
         for (Component c : container.getComponents()) {
             if (c.isVisible()) {
                 currentCardPanel = (JPanel) c;
                 currentCard = Enum.valueOf(Card.class, currentCardPanel.getName());
-                //if we're not connected don't access anything that requires a connection
-                if(myId == Constants.DEFAULT_CLIENT_ID && currentCard.ordinal() >= Card.CHAT.ordinal()){
+                // if we're not connected don't access anything that requires a connection
+                if (myId == Constants.DEFAULT_CLIENT_ID && currentCard.ordinal() >= Card.CHAT.ordinal()) {
                     show(Card.CONNECT.name());
                 }
                 break;
@@ -117,6 +117,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         }
         System.out.println(currentCardPanel.getName());
     }
+
     @Override
     public void next() {
         card.next(container);
@@ -126,7 +127,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     @Override
     public void previous() {
         card.previous(container);
-        
+        findAndSetCurrentPanel();
     }
 
     @Override
@@ -147,7 +148,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         int port = csPanel.getPort();
         setTitle(originalTitle + " - " + username);
         Client.INSTANCE.connect(host, port, username, this);
-        //TODO add connecting screen/notice
+        // TODO add connecting screen/notice
     }
 
     public static void main(String[] args) {

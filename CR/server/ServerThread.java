@@ -12,6 +12,10 @@ import CR.common.Payload;
 import CR.common.PayloadType;
 import CR.common.RoomResultPayload;
 
+// shc4 11/17/23 it114-005
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A server-side representation of a single client
  */
@@ -25,6 +29,10 @@ public class ServerThread extends Thread {
     private Room currentRoom;
     private static Logger logger = Logger.getLogger(ServerThread.class.getName());
     private long myClientId;
+
+    // shc4 11/17/23 it114-005
+    // mute list
+    private List<String> muteList = new ArrayList<String>();
 
     public void setClientId(long id) {
         myClientId = id;
@@ -202,9 +210,31 @@ public class ServerThread extends Thread {
         }
     }
 
-    // shc4 11/16/23 it114-005
+    // shc4 11/17/23 it114-005
     // this payload will handle the mute people
-    
+    public boolean muteUser(String name){
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.MUTE);
+        p.setClientName(name);
+        return send(p);
+    }
+
+    public boolean unmuteUser(String name){
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.UNMUTE);
+        p.setClientName(name);
+        return send(p);
+    }
+
+    // checks if a person is muted
+    public boolean isMuted(String name){
+        for(String i: muteList){
+            if(i.equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     // shc4 11/11/23 it114-005
     // this works with the different types of payload depending on what the user does

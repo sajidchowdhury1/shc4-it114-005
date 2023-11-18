@@ -143,7 +143,7 @@ public class Room implements AutoCloseable {
                             sendMessage(null,String.format("<b>%s did a coin <i><font color=\"blue\">flip</font><i> and landed on <i><font color=\"green\">Heads</font></i></b>", client.getClientName()));
                         }
                         else if(coin == 1){
-                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\\\"blue\\\">flip</font><i> and landed on <i><font color=\\\"green\\\">Tails</font></i></b>", client.getClientName()));
+                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\"blue\">flip</font><i> and landed on <i><font color=\"green\">Tails</font></i></b>", client.getClientName()));
                         }
                         break;
                     case ROLL:
@@ -242,11 +242,34 @@ public class Room implements AutoCloseable {
         message = ConvertMessageRed(message); // use &
         message = ConvertMessageGreen(message); // use %
         message = ConvertMessageBlue(message); // use #
+        
 
-
+        // shc4 11/17/23 it114-005
+        // private message
+        if(message.trim().startsWith("@")){
+            String[] message2 = message.split(" ");
+            String userName = message2[0].substring(1);
+            //long userID = 0;
+            //ServerThread user = null;
+            sender.sendMessage(sender.getClientId(),String.format("<font color=\"brown\">Private Message: %s</font>", message));
+            for(ServerThread i: clients){
+                if(i.isMuted(i.getClientName())){
+                    sender.sendMessage(sender.getClientId(), "Message is muted");
+                }
+                if(i.getClientName().equals(userName)){
+                    i.sendMessage(sender.getClientId(), String.format("<font color=\"brown\">Private Message: %s</font>", message));
+                }
+                
+            }
+            return;
+        }
 
         while (iter.hasNext()) {
             ServerThread client = iter.next();
+            // shc4 11/17/23 it114-005
+            if(client.isMuted(sender.getClientName())){
+                continue;
+            }
             boolean messageSent = client.sendMessage(from, message);
             if (!messageSent) {
                 handleDisconnect(iter, client);

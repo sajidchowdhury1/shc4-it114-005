@@ -10,6 +10,7 @@
 ./client/IClientEvents.java
 ./client/ClientUtils.java
 ./client/Card.java
+./client/User.java
 ./client/ICardControls.java
 ./client/ClientUI.java
 ./client/views/UserInputPanel.java

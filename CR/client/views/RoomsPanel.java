@@ -19,10 +19,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-
-import CR.client.Card;
 import CR.client.Client;
 import CR.client.ICardControls;
+import CR.client.Card;
 
 public class RoomsPanel extends JPanel {
     JPanel container;
@@ -60,7 +59,7 @@ public class RoomsPanel extends JPanel {
                 String query = searchValue.getText().trim();
                 if (query.length() > 0) {
                     removeAllRooms();
-                    Client.INSTANCE.sendGetRooms(query);
+                    Client.INSTANCE.sendListRooms(query);
                     message.setText("Sent query");
                 } else {
                     message.setText("Can't search with an empty query");

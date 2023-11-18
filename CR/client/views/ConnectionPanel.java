@@ -1,5 +1,7 @@
 package CR.client.views;
 
+import java.awt.BorderLayout;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -8,8 +10,6 @@ import javax.swing.JTextField;
 
 import CR.client.Card;
 import CR.client.ICardControls;
-
-import java.awt.BorderLayout;
 
 public class ConnectionPanel extends JPanel {
     private String host;
@@ -65,10 +65,12 @@ public class ConnectionPanel extends JPanel {
         this.setName(Card.CONNECT.name());
         controls.addPanel(Card.CONNECT.name(), this);
     }
-    public String getHost(){
+
+    public String getHost() {
         return host;
     }
-    public int getPort(){
+
+    public int getPort() {
         return port;
     }
 }

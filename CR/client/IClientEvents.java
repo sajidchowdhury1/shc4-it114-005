@@ -3,18 +3,23 @@ package CR.client;
 public interface IClientEvents {
     /**
      * Triggered when a client connects
+     * 
      * @param clientName
      * @param message
      */
     void onClientConnect(long id, String clientName, String message);
+
     /**
      * Triggered when a client disconnects
+     * 
      * @param clientName
      * @param message
      */
     void onClientDisconnect(long id, String clientName, String message);
+
     /**
      * Triggered when a message is received
+     * 
      * @param clientName
      * @param message
      */
@@ -22,30 +27,45 @@ public interface IClientEvents {
 
     /**
      * Received the server-given id for our client reference
+     * 
      * @param id
      */
     void onReceiveClientId(long id);
 
     /**
      * Used to sync existing clients
+     * 
      * @param id
      * @param clientName
      */
     void onSyncClient(long id, String clientName);
 
     /**
-     * Triggered when we need to clear the user list, likely during a room transition
+     * Triggered when we need to clear the user list, likely during a room
+     * transition
      */
     void onResetUserList();
+
     /**
      * Received Room list from server
-     * @param rooms list of rooms or null if error
-     * @param message a message related to the action, may be null (usually if rooms.length > 0)
+     * 
+     * @param rooms   list of rooms or null if error
+     * @param message a message related to the action, may be null (usually if
+     *                rooms.length > 0)
      */
     void onReceiveRoomList(String[] rooms, String message);
+
     /**
      * Receives the Room name when the client is added to the Room
+     * 
      * @param roomName
      */
     void onRoomJoin(String roomName);
+
+
+    //shc4 11/17/23 it114-005
+    /**
+     * Recieves the name of the person who is muted
+     */
+    //void isMute(String name); 
 }
