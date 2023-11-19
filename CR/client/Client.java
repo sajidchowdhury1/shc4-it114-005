@@ -8,16 +8,11 @@ import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.logging.Logger;
 
-//import CR.common.CharacterPayload;
+
 import CR.common.Constants;
-//import CR.common.Grid;
 import CR.common.Payload;
 import CR.common.PayloadType;
-//import CR.common.PositionPayload;
 import CR.common.RoomResultPayload;
-//import CR.common.Character.CharacterType;
-//import CR.common.CellPayload;
-//import CR.common.Character;
 
 public enum Client {
     INSTANCE;
@@ -36,6 +31,11 @@ public enum Client {
     private static Logger logger = Logger.getLogger(Client.class.getName());
 
     private Hashtable<Long, User> userList = new Hashtable<Long, User>();
+    // shc4 11/18/23 it114-005
+    // commends to handle mute and unmute commends
+    private final static String COMMEND = "/";
+    private final static String MUTEUSER = "Mute";
+    private final static String UNMUTEUSER = "Unmute";
 
     //Grid clientGrid = new Grid();
 
@@ -84,27 +84,6 @@ public enum Client {
         return isConnected();
     }
 
-    // Send methods
-    /*protected void sendMove(int x, int y) throws IOException {
-        PositionPayload pp = new PositionPayload();
-        pp.setCoord(x, y);
-        out.writeObject(pp);
-    }*/
-
-    /*protected void sendLoadCharacter(String characterCode) throws IOException {
-        CharacterPayload cp = new CharacterPayload();
-        Character c = new Character();
-        c.setCode(characterCode);
-        cp.setCharacter(c);
-        out.writeObject(cp);
-    }*/
-
-    /*protected void sendCreateCharacter(CharacterType characterType) throws IOException {
-        CharacterPayload cp = new CharacterPayload();
-        cp.setCharacterType(characterType);
-        out.writeObject(cp);
-    }*/
-
     protected void sendReadyStatus() throws IOException {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.READY);
@@ -146,6 +125,11 @@ public enum Client {
     }
 
     public void sendMessage(String message) throws IOException {
+        // shc4 11/18/23 it114-005
+        // this will check if its a commmend and if not it will do a normal send message
+        if(processCommend(message)){
+            return;
+        }
         Payload p = new Payload();
         p.setPayloadType(PayloadType.MESSAGE);
         p.setMessage(message);
@@ -190,7 +174,58 @@ public enum Client {
         if (id == Constants.DEFAULT_CLIENT_ID) {
             return "[Server]";
         }
-        return "unkown user";
+        return "unknown user";
+    }
+
+    // shc4 11/18/23 it114-005
+    // process commend to use mute and unmute
+    private boolean processCommend(String commend){
+        boolean isCommend = false;
+        
+        if(commend.startsWith(COMMEND)){
+            try{
+                isCommend = true;
+                String check = commend.substring(1).trim().split(" ")[0]; // mute or unmute commend
+                String name = commend.substring(1).trim().split(" ")[1]; // name of the user
+                if(name.equalsIgnoreCase(myUser.getClientName())){
+                    System.out.println("You cannot mute/unmute youself");
+                    isCommend = false;
+                    return isCommend;
+                }
+                switch(check){
+                    // mute
+                    case MUTEUSER:
+                        this.muteUser(name);
+                        break;
+                    // unmute
+                    case UNMUTEUSER:
+                        this.unmuteUser(name);
+                        break;
+                    default:
+                        isCommend = false;
+                        break;
+                }
+            }catch(Exception e){
+                System.out.print("Invalid format for commend");
+            }
+        }
+        return isCommend;
+    }
+
+    // shc4 11/18/23 it114-005
+    // payload method to handle mute
+    public void muteUser(String name) throws IOException{
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.MUTE);
+        p.setClientName(name);
+        out.writeObject(p);
+    }
+    // payload method to handle unmute
+    public void unmuteUser(String name) throws IOException{
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.UNMUTE);
+        p.setClientName(name);
+        out.writeObject(p);
     }
 
     /**
@@ -265,67 +300,14 @@ public enum Client {
                 userList.clear();
                 events.onResetUserList();
                 break;
-            case READY:
-                System.out.println(String.format("Player %s is ready", getClientNameById(p.getClientId())));
+            // shc4 11/18/23 it114-005
+            // this is to handle mute message and unmute message
+            case MUTE:
+                events.onMessageReceive(-1, String.format("<b><font color=\"red\">%s was muted</font></b>",p.getClientName()));
                 break;
-            /*case PHASE:
-                System.out.println(String.format("The current phase is %s", p.getMessage()));
+            case UNMUTE:
+                events.onMessageReceive(-1, String.format("<b><font color=\"green\">%s was unmuted</font></b>",p.getClientName()));
                 break;
-            case CHARACTER:
-                CharacterPayload cp = (CharacterPayload) p;
-                System.out.println("Created Character");
-                Character character = cp.getCharacter();
-
-                if (userList.containsKey(cp.getClientId())) {
-                    logger.info("Assigning character to " + cp.getClientId());
-                    userList.get(cp.getClientId()).assignCharacter(character);
-                }
-                if (cp.getClientId() == myClientId) {
-                    // myPlayer.assignCharacter(character);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Character created: ").append(character.getName()).append("\n");
-                    sb.append("Character level: ").append(character.getLevel()).append("\n");
-                    sb.append("Character type: ").append(character.getType()).append("\n");
-                    sb.append("Character action type: ").append(character.getActionType()).append("\n");
-                    sb.append("Character stats: ").append("\n");
-                    sb.append("Attack: ").append(character.getAttack()).append("\n");
-                    sb.append("Vitality: ").append(character.getVitality()).append("\n");
-                    sb.append("Defense: ").append(character.getDefense()).append("\n");
-                    sb.append("Will: ").append(character.getWill()).append("\n");
-                    sb.append("Luck: ").append(character.getLuck()).append("\n");
-                    sb.append("Progression Rate: ").append(character.getProgressionRate()).append("\n");
-                    sb.append("Range: ").append(character.getRange()).append("\n");
-                    System.out.println(sb.toString());
-                }
-                break;
-            case TURN:
-                System.out.println(String.format("Current Player: %s", getClientNameById(p.getClientId())));
-                break;
-            case GRID:
-                try {
-                    PositionPayload pp = (PositionPayload) p;
-                    clientGrid.buildBasic(pp.getX(), pp.getY());
-                    clientGrid.print();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case CELL:
-                try {
-                    CellPayload cellPayload = (CellPayload) p;
-                    clientGrid.update(cellPayload.getCellData(), userList);
-                    clientGrid.print();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case GRID_RESET:
-                if (clientGrid != null) {
-                    clientGrid.reset();
-                    System.out.println("Grid Reset");
-                    clientGrid.print();
-                }
-                break;*/
             default:
                 logger.warning(String.format("Unhandled Payload type: %s", p.getPayloadType()));
                 break;

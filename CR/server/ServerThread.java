@@ -212,20 +212,21 @@ public class ServerThread extends Thread {
 
     // shc4 11/17/23 it114-005
     // this payload will handle the mute people
-    public boolean muteUser(String name){
+    public boolean sendMuteUser(String name){
         Payload p = new Payload();
         p.setPayloadType(PayloadType.MUTE);
         p.setClientName(name);
         return send(p);
     }
 
-    public boolean unmuteUser(String name){
+    public boolean sendUnmuteUser(String name){
         Payload p = new Payload();
         p.setPayloadType(PayloadType.UNMUTE);
         p.setClientName(name);
         return send(p);
     }
 
+    // shc4 11/18/23 it114-005
     // checks if a person is muted
     public boolean isMuted(String name){
         for(String i: muteList){
@@ -265,9 +266,22 @@ public class ServerThread extends Thread {
             case JOIN_ROOM:
                 Room.joinRoom(p.getMessage().trim(), this);
                 break;
-            case READY:
-                // ((GameRoom) currentRoom).setReady(myClientId);
+            // shc4 11/18/23 it114-005
+            // process payloads to handle mute list
+            // Link: https://docs.oracle.com/javase/8/docs/api/java/util/ArrayList.html
+            case MUTE:
+                if(!muteList.contains(p.getClientName())){
+                    muteList.add(p.getClientName());
+                    sendMuteUser(p.getClientName());
+                }
                 break;
+            case UNMUTE:
+                muteList.remove(p.getClientName());
+                sendUnmuteUser(p.getClientName());
+                break;
+            //case READY:
+                // ((GameRoom) currentRoom).setReady(myClientId);
+                //break;
             default:
                 break;
 
