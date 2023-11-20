@@ -136,6 +136,7 @@ public class Room implements AutoCloseable {
                     // shc4 11/8/23 it114-005
                     // flip
                     // had support from Danny, Daniel, and Yaneli
+                        System.out.println("Test 1");
                         int coin = (int) (Math.random()*2); 
                         if(coin == 0){
                             // shc4 11/16/23 it114-005
@@ -147,6 +148,7 @@ public class Room implements AutoCloseable {
                         }
                         break;
                     case ROLL:
+                    System.out.println("Test 2");
                         int total = 0;
                         try{
                             if(message.trim().split(" ")[1].contains("d")){
@@ -247,20 +249,29 @@ public class Room implements AutoCloseable {
         // shc4 11/17/23 it114-005
         // private message
         if(message.trim().startsWith("@")){
-            String[] message2 = message.split(" ");
-            String userName = message2[0].substring(1);
-            //long userID = 0;
-            //ServerThread user = null;
-            sender.sendMessage(sender.getClientId(),String.format("<font color=#8B4000>Private Message: %s</font>", message));
-            for(ServerThread i: clients){
-                if(i.isMuted(sender.getClientName())){
-                    sender.sendMessage(sender.getClientId(), "<b><font color=\"red\">Message was muted</font></b>");
-                    continue;
+            try{
+                String[] message2 = message.split(" ");
+                String userName = message2[0].substring(1).split(":")[0];
+                Long userID = Long.parseLong((message2[0].substring(1).split(":")[1]));
+                if(userName.length() == 0) {
+                    throw new Exception("Message");
                 }
-                if(i.getClientName().equals(userName)){
-                    i.sendMessage(sender.getClientId(), String.format("<font color=#006400>Private Message: %s</font>", message));
+                sender.sendMessage(sender.getClientId(),String.format("<font color=#8B4000>Private Message: %s</font>", message));
+                for(ServerThread i: clients){
+                    if(i.isMuted(sender.getClientName())){
+                        sender.sendMessage(sender.getClientId(), "<b><font color=\"red\">Message was muted</font></b>");
+                        continue;
+                    }
+                    if(i.getClientName().equals(userName) && i.getClientId() == userID){
+                        i.sendMessage(sender.getClientId(), String.format("<font color=#006400>Private Message: %s</font>", message));
+                    }
+                    else{
+                        sender.sendMessage(-1, String.format("<b>Username or ID did not match</b>"));
+                        throw new Exception();
+                    }
                 }
-                
+            }catch(Exception e){
+                sender.sendMessage(-1, String.format("<b>Type <font color=#800080>@Username:ID (Message)</font> to properly send the message</b>"));
             }
             return;
         }
@@ -268,9 +279,13 @@ public class Room implements AutoCloseable {
         while (iter.hasNext()) {
             ServerThread client = iter.next();
             // shc4 11/17/23 it114-005
+            System.out.println(String.format("Did %s mute %s", client.getClientName(), sender.getClientName()));
             if(client.isMuted(sender.getClientName())){
+                System.out.println("Yes, sender was muted");
                 continue;
             }
+            System.out.println("no, sender was not muted");
+            System.out.println(String.format("Receiving message %s", message));
             boolean messageSent = client.sendMessage(from, message);
             if (!messageSent) {
                 handleDisconnect(iter, client);

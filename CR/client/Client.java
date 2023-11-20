@@ -37,7 +37,6 @@ public enum Client {
     private final static String MUTEUSER = "Mute";
     private final static String UNMUTEUSER = "Unmute";
 
-    //Grid clientGrid = new Grid();
 
     private static IClientEvents events;
 
@@ -188,7 +187,8 @@ public enum Client {
                 String check = commend.substring(1).trim().split(" ")[0]; // mute or unmute commend
                 String name = commend.substring(1).trim().split(" ")[1]; // name of the user
                 if(name.equalsIgnoreCase(myUser.getClientName())){
-                    System.out.println("You cannot mute/unmute youself");
+                    //System.out.println("You cannot mute/unmute youself");
+                    events.onMessageReceive(-1,"<b>You cannot mute/unmute youself</b>");
                     isCommend = false;
                     return isCommend;
                 }
@@ -206,7 +206,9 @@ public enum Client {
                         break;
                 }
             }catch(Exception e){
-                System.out.print("Invalid format for commend");
+                //System.out.print("Invalid format for commend");
+                //events.onMessageReceive(-1,"<b>Invalid format for commend</b>");
+                isCommend = false;
             }
         }
         return isCommend;

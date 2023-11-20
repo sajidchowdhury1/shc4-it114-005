@@ -48,6 +48,14 @@ public class UserInputPanel extends JPanel {
                     userError.setVisible(true);
                     isValid = false;
                 }
+                // shc4 11/19/23 it114-005
+                // Stopping users from having spaces in the username
+                // Had support from Daniel
+                else if(username.contains(" ")){
+                    userError.setText("Username must not contain spaces");
+                    userError.setVisible(true);
+                    isValid = false;
+                }
             } catch (NullPointerException e) {
                 userError.setText("Username must be provided");
                 userError.setVisible(true);
