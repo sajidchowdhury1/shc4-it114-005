@@ -248,7 +248,7 @@ public class Room implements AutoCloseable {
 
         // shc4 11/17/23 it114-005
         // private message
-        if(message.trim().startsWith("@")){
+        if(sender != null && message.trim().startsWith("@")){
             try{
                 String[] message2 = message.split(" ");
                 String userName = message2[0].substring(1).split(":")[0];
@@ -275,17 +275,14 @@ public class Room implements AutoCloseable {
             }
             return;
         }
-
+        
         while (iter.hasNext()) {
             ServerThread client = iter.next();
             // shc4 11/17/23 it114-005
-            System.out.println(String.format("Did %s mute %s", client.getClientName(), sender.getClientName()));
-            if(client.isMuted(sender.getClientName())){
+            if(sender != null && client.isMuted(sender.getClientName())){
                 System.out.println("Yes, sender was muted");
                 continue;
             }
-            System.out.println("no, sender was not muted");
-            System.out.println(String.format("Receiving message %s", message));
             boolean messageSent = client.sendMessage(from, message);
             if (!messageSent) {
                 handleDisconnect(iter, client);
