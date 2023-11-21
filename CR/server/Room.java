@@ -132,40 +132,68 @@ public class Room implements AutoCloseable {
                     case LOGOFF:
                         Room.disconnectClient(client, this);
                         break;
+                    // This case is a variable called flip which holds the world "flip", so when commends are proccessed with a / and word flip this will go off
                     case FLIP:
-                    // shc4 11/8/23 it114-005
-                    // flip
-                    // had support from Danny, Daniel, and Yaneli
+                        // shc4 11/8/23 it114-005
+                        // flip
+                        // had support from Danny, Daniel, and Yaneli
+                        // This is the coin variable which holds a math.random that is casted as an int so it can cut off the float decimals.
+                        // math.random is multipled by 2 because math.random by itself produces it does [0,1) in float values. But when multiply by 2
+                        // it becomes [0,2), which means it will either becomes a number between 0 or 1
                         int coin = (int) (Math.random()*2); 
+                        // If the coin value becomes 0, then it will do a sendMessage from server (null) saying who did a flip and their result is heads
                         if(coin == 0){
-                            sendMessage(null,String.format("%s did a coin flip and landed on Heads", client.getClientName()));
+                            // shc4 11/16/23 it114-005
+                            // has been modified for formatting on ui interface so flip can look different
+                            // uses different html tags to make this appearence
+                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\"blue\">flip</font><i> and landed on <i><font color=\"green\">Heads</font></i></b>", client.getClientName()));
                         }
+                        // if the coin value becomes 1, then it will do a a sendMessage from server (null) saying who did a flip and their result in tails
                         else if(coin == 1){
-                            sendMessage(null,String.format("%s did a coin flip and landed on Tails", client.getClientName()));
+                            // this has been modified for formatting on ui so it has html tags to look different
+                            sendMessage(null,String.format("<b>%s did a coin <i><font color=\"blue\">flip</font><i> and landed on <i><font color=\"green\">Tails</font></i></b>", client.getClientName()));
                         }
+                        // Once the code is done running it breaks out of the switch statement
                         break;
+                    // shc4 11/20/23 it114-005
+                    // this case has variable called ROLL which contains "roll", so once /roll happens in the ui, it will do this function
                     case ROLL:
+                        // this variable will hold the results
                         int total = 0;
+                        // this try and catch is needed to stop isseus with split formatting
                         try{
+                            // if condition checks if the roll contains 'd', so it can do /roll #d# logic
                             if(message.trim().split(" ")[1].contains("d")){
+                                // gets the number of dice from the first number before d
                                 String numberOfDice = message.split(" ")[1].split("d")[0];
+                                // gets the number of sides from the second number after d
                                 String sidesOfDice = message.split(" ")[1].split("d")[1];
 
+                                // this for loop goes through the number of dice
                                 for(int i = 0; i < Integer.parseInt(numberOfDice); i++){
+                                    // this produces a random number from the sides
                                     int rollDice = (int) (Math.random()*Integer.parseInt(sidesOfDice))+1;
+                                    // this will add on the random dice rolls to the total
                                     total += rollDice;
                                 }
-                                sendMessage(null, String.format("%s did a roll of %sd%s and got a total roll of %s", client.getClientName(), numberOfDice, sidesOfDice, total));
+                                // this sendMessage is being sent by server since its null. Has html tags to format the sentence. Also show who sent it and their results
+                                sendMessage(null, String.format("<b>%s did a <i><font color=\"red\">roll</font></i> of <u>%sd%s</u> and got a total roll of <font color=\"red\">%s</font></b>", client.getClientName(), numberOfDice, sidesOfDice, total));
                             } 
                             else{
+                                // if the condition above does not happen than it will do this else which is /roll # 
+                                // this will get the number after roll
                                 int value = Integer.parseInt(message.trim().split(" ")[1]);
+                                // producess a random with that many sides and its added by 1 so it does not do 0 to something but does do with 1 to something
                                 int singleDiceRoll = (int) (Math.random()*value)+1;
-                                sendMessage(null, String.format("%s did a roll with a range of 1-%s and the result is %s", client.getClientName(),value, singleDiceRoll));
+                                // this is the server message that is being sent which is formatted with html tags. Also shows who did it and their result
+                                sendMessage(null, String.format("<b>%s did a <i><font color=\"red\">roll</font></i> with a range of <u>1-%s</u> and the result is <font color=\"red\">%s</font></b>", client.getClientName(),value, singleDiceRoll));
                             }
-                            return true;
+                            //return true;
                         }catch(Exception e){
-                            sendMessage(null,"invalid input");
+                            // this is to send an error message saying it invalid input to the individual client who typed it
+                            client.sendMessage(-1,"<b><font color=\"red\">invalid input</font></b>");
                         }
+                        // this will break out of the roll function after it is done
                         break;
                     default:
                         wasCommand = false;
@@ -240,11 +268,39 @@ public class Room implements AutoCloseable {
         message = ConvertMessageRed(message); // use &
         message = ConvertMessageGreen(message); // use %
         message = ConvertMessageBlue(message); // use #
-
-
-
+        
+        // shc4 11/17/23 it114-005
+        // private message
+        if(sender != null && message.trim().startsWith("@")){
+            try{
+                String[] message2 = message.split(" ");
+                String userName = message2[0].substring(1).split(":")[0];
+                Long userID = Long.parseLong((message2[0].substring(1).split(":")[1]));
+                if(userName.length() == 0) {
+                    throw new Exception("Message");
+                }
+                sender.sendMessage(sender.getClientId(),String.format("<font color=#8B4000>Private Message: %s</font>", message));
+                for(ServerThread i: clients){
+                    if(i.isMuted(sender.getClientName())){
+                        sender.sendMessage(sender.getClientId(), "<b><font color=\"red\">Message was muted</font></b>");
+                        continue;
+                    }
+                    if(i.getClientName().equals(userName) && i.getClientId() == userID){
+                        i.sendMessage(sender.getClientId(), String.format("<font color=#006400>Private Message: %s</font>", message));
+                    }
+                }
+            }catch(Exception e){
+                sender.sendMessage(-1, String.format("<b>Type <font color=#800080>@Username:ID (Message)</font> to properly send the message</b>"));
+            }
+            return;
+        }
+        
         while (iter.hasNext()) {
             ServerThread client = iter.next();
+            // shc4 11/17/23 it114-005
+            if(sender != null && client.isMuted(sender.getClientName())){
+                continue;
+            }
             boolean messageSent = client.sendMessage(from, message);
             if (!messageSent) {
                 handleDisconnect(iter, client);
