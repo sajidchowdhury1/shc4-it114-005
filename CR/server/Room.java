@@ -288,10 +288,6 @@ public class Room implements AutoCloseable {
                     if(i.getClientName().equals(userName) && i.getClientId() == userID){
                         i.sendMessage(sender.getClientId(), String.format("<font color=#006400>Private Message: %s</font>", message));
                     }
-                    else{
-                        sender.sendMessage(-1, String.format("<b>Username or ID did not match</b>"));
-                        throw new Exception();
-                    }
                 }
             }catch(Exception e){
                 sender.sendMessage(-1, String.format("<b>Type <font color=#800080>@Username:ID (Message)</font> to properly send the message</b>"));
