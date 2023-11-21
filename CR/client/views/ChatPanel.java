@@ -56,6 +56,9 @@ public class ChatPanel extends JPanel {
         input.add(textValue);
         JButton button = new JButton("Send");
         // lets us submit with the enter key instead of just the button click
+        // shc4 11/20/23 it114-005
+        // This code was given with the UI files from DCT
+        // This code basically sees if a enter key is pressed and will do the send button function
         textValue.addKeyListener(new KeyListener() {
 
             @Override

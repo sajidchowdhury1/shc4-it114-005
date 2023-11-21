@@ -34,8 +34,8 @@ public enum Client {
     // shc4 11/18/23 it114-005
     // commends to handle mute and unmute commends
     private final static String COMMEND = "/";
-    private final static String MUTEUSER = "Mute";
-    private final static String UNMUTEUSER = "Unmute";
+    private final static String MUTEUSER = "mute";
+    private final static String UNMUTEUSER = "unmute";
 
 
     private static IClientEvents events;
