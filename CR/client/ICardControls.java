@@ -12,4 +12,7 @@ public interface ICardControls {
     void addPanel(String name, JPanel panel);
 
     void connect();
+
+    // shc4 11/27/23 it114-005
+    void export();
 }

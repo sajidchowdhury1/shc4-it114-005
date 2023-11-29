@@ -258,4 +258,11 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
             chatPanel.addText("Joined room " + roomName);
         }
     }
+
+    // shc4 11/28/23 it114-005
+    // this method is to work with the menu button to export the chat history
+    @Override
+    public void export(){
+        chatPanel.clientHistory();
+    }
 }
