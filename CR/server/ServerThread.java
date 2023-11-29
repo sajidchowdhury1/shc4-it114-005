@@ -95,12 +95,12 @@ public class ServerThread extends Thread {
     // shc4 11/11/23 it114-005
     // These payloads were given with the milestone2 prep
     // sendReadyStatus would send a payload showing which client is ready and active 
-    public boolean sendReadyStatus(long clientId) {
+    /*public boolean sendReadyStatus(long clientId) {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.READY);
         p.setClientId(clientId);
         return send(p);
-    }
+    }*/
 
     // shc4 11/11/23 it114-005
     // This one payload will be the name of the room
@@ -282,12 +282,18 @@ public class ServerThread extends Thread {
                 if(!muteList.contains(p.getClientName())){
                     muteList.add(p.getClientName());
                     sendMuteUser(p.getClientName());
+                    // this would send a message to the muted person
+                    currentRoom.muteMessage(this, p.getClientName());
+                    // saves mute list names after someone is added
                     muteFile();
                 }
                 break;
             case UNMUTE:
                 muteList.remove(p.getClientName());
                 sendUnmuteUser(p.getClientName());
+                // this would send a message to an unmutted person
+                currentRoom.unmuteMessage(this, p.getClientName());
+                // saves the mute list name after someone is removed
                 muteFile();
                 break;
             default:
