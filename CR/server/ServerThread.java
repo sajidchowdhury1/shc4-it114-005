@@ -16,6 +16,12 @@ import CR.common.RoomResultPayload;
 import java.util.ArrayList;
 import java.util.List;
 
+// shc4 11/28/23 it114-005
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.util.Scanner;
+
 /**
  * A server-side representation of a single client
  */
@@ -244,6 +250,9 @@ public class ServerThread extends Thread {
         switch (p.getPayloadType()) {
             case CONNECT:
                 setClientName(p.getClientName());
+                // shc4 11/29/23 it114-005
+                // this is going to open the saved file when they connect to the folder
+                openSavedMuteFile();
                 break;
             case DISCONNECT:
                 Room.disconnectClient(this, getCurrentRoom());
@@ -273,18 +282,60 @@ public class ServerThread extends Thread {
                 if(!muteList.contains(p.getClientName())){
                     muteList.add(p.getClientName());
                     sendMuteUser(p.getClientName());
+                    muteFile();
                 }
                 break;
             case UNMUTE:
                 muteList.remove(p.getClientName());
                 sendUnmuteUser(p.getClientName());
+                muteFile();
                 break;
-            //case READY:
-                // ((GameRoom) currentRoom).setReady(myClientId);
-                //break;
             default:
                 break;
+        }
+    }
+    // shc4 11/28/23 it114-005
+    // create mute list
+    private void muteFile(){
+        try(FileWriter muteFile = new FileWriter(this.getClientName() + "_mutelist.txt");){
+            for(String i: muteList){
+                muteFile.write(i + ",");
+            }
+            muteFile.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
+    }
+
+    // shc4 11/29/23 it114-005
+    // opening saved files
+    private void openSavedMuteFile(){
+        // link: https://stackoverflow.com/questions/19702659/about-file-file-new-filepath
+        // shows how files that already exist with the same name will open
+        File muteFile = new File(this.getClientName() + "_mutelist.txt");
+        // this will stop the code from wrong when the file does not exist
+        if(!muteFile.exists()){
+            return;
+        }
+        // Link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Scanner.html
+        try(Scanner scanFile = new Scanner(muteFile)){
+            String getNames = scanFile.nextLine();
+            String[] names = getNames.split(",");
+            for(String i: names){
+                if(i.equals(" ")){
+                    continue;
+                }
+                muteList.add(i.trim());
+            }
+        }catch(FileNotFoundException e){
+            System.out.println("File issues");
+            e.printStackTrace();
+        }catch(Exception e){
+            System.out.println("Name array issues/others");
+            e.printStackTrace();
         }
 
     }
