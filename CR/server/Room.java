@@ -565,7 +565,7 @@ public class Room implements AutoCloseable {
     protected void muteMessage(ServerThread muter, String mutedName){
         for(ServerThread i: clients){
             if(i.getClientName().equals(mutedName)){
-                i.sendMessage(-1, String.format("%s has muted you", muter.getClientName()));
+                i.sendMessage(-1, String.format("<b><font color=\"red\">%s has muted you</font></b>", muter.getClientName()));
             }
         }
     }
@@ -574,7 +574,7 @@ public class Room implements AutoCloseable {
     protected void unmuteMessage(ServerThread muter, String mutedName){
         for(ServerThread i: clients){
             if(i.getClientName().equals(mutedName)){
-                i.sendMessage(-1, String.format("%s has unmuted you", muter.getClientName()));
+                i.sendMessage(-1, String.format("<b><font color=\"green\">%s has unmuted you</font></b>", muter.getClientName()));
             }
         }
     }

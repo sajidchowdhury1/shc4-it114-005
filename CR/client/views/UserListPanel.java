@@ -66,7 +66,9 @@ public class UserListPanel extends JPanel {
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
-        JEditorPane textContainer = new JEditorPane("text/plain", clientName);
+        // shc4 11/29/23 it114-005
+        // this formats usernames when they have html tags
+        JEditorPane textContainer = new JEditorPane("text/html", clientName);
         textContainer.setName(clientId + "");
         // sizes the panel to attempt to take up the width of the container
         // and expand in height based on word wrapping

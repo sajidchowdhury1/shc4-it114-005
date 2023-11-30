@@ -61,11 +61,5 @@ public interface IClientEvents {
      * @param roomName
      */
     void onRoomJoin(String roomName);
-
-
-    //shc4 11/17/23 it114-005
-    /**
-     * Recieves the name of the person who is muted
-     */
-    //void isMute(String name); 
+    
 }

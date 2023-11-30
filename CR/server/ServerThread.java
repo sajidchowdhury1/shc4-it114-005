@@ -243,6 +243,19 @@ public class ServerThread extends Thread {
         return false;
     }
 
+    // shc4 11/29/23 it114-005
+    // method to send mute list to client
+    // link: https://www.geeksforgeeks.org/java-string-join-examples/
+    public void sendMuteList(){
+        String muteNameCommaList = "";
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.MUTE_LIST);
+        muteNameCommaList = String.join(",", muteList);
+        p.setMessage(muteNameCommaList);
+        send(p);
+    }
+
+
     // shc4 11/11/23 it114-005
     // this works with the different types of payload depending on what the user does
     // so it has connect, disconnect, and other payloads the is helpful for the user
@@ -253,6 +266,10 @@ public class ServerThread extends Thread {
                 // shc4 11/29/23 it114-005
                 // this is going to open the saved file when they connect to the folder
                 openSavedMuteFile();
+                // sending mute list to client
+                if(muteList != null && !muteList.isEmpty()){
+                    sendMuteList();
+                }
                 break;
             case DISCONNECT:
                 Room.disconnectClient(this, getCurrentRoom());
@@ -284,6 +301,8 @@ public class ServerThread extends Thread {
                     sendMuteUser(p.getClientName());
                     // this would send a message to the muted person
                     currentRoom.muteMessage(this, p.getClientName());
+                    // sending muteList to client
+                    sendMuteList();
                     // saves mute list names after someone is added
                     muteFile();
                 }
@@ -293,6 +312,8 @@ public class ServerThread extends Thread {
                 sendUnmuteUser(p.getClientName());
                 // this would send a message to an unmutted person
                 currentRoom.unmuteMessage(this, p.getClientName());
+                // sending mute list to client after unmuting
+                sendMuteList();
                 // saves the mute list name after someone is removed
                 muteFile();
                 break;
@@ -304,9 +325,7 @@ public class ServerThread extends Thread {
     // create mute list
     private void muteFile(){
         try(FileWriter muteFile = new FileWriter(this.getClientName() + "_mutelist.txt");){
-            for(String i: muteList){
-                muteFile.write(i + ",");
-            }
+            muteFile.write(String.join(",", this.muteList));
             muteFile.close();
         }catch(IOException e){
             e.printStackTrace();
@@ -331,9 +350,6 @@ public class ServerThread extends Thread {
             String getNames = scanFile.nextLine();
             String[] names = getNames.split(",");
             for(String i: names){
-                if(i.equals(" ")){
-                    continue;
-                }
                 muteList.add(i.trim());
             }
         }catch(FileNotFoundException e){

@@ -14,6 +14,11 @@ import CR.common.Payload;
 import CR.common.PayloadType;
 import CR.common.RoomResultPayload;
 
+// shc4 11/29/23 it114-005
+// import for array list
+import java.util.List;
+import java.util.ArrayList;
+
 public enum Client {
     INSTANCE;
 
@@ -37,6 +42,9 @@ public enum Client {
     private final static String MUTEUSER = "mute";
     private final static String UNMUTEUSER = "unmute";
 
+    // shc4 11/29/23 it114-005
+    // this is the mute list within clients
+    protected List<String> muteList = new ArrayList<String>();
 
     private static IClientEvents events;
 
@@ -83,11 +91,11 @@ public enum Client {
         return isConnected();
     }
 
-    protected void sendReadyStatus() throws IOException {
+    /*protected void sendReadyStatus() throws IOException {
         Payload p = new Payload();
         p.setPayloadType(PayloadType.READY);
         out.writeObject(p);
-    }
+    }*/
 
     public void sendListRooms(String query) throws IOException {
         Payload p = new Payload();
@@ -309,6 +317,14 @@ public enum Client {
                 break;
             case UNMUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"green\">%s was unmuted</font></b>",p.getClientName()));
+                break;
+            // shc4 11/29/23
+            // this handles the must list that comes in
+            case MUTE_LIST:
+                String[] names = p.getMessage().split(",");
+                for(String i: names){
+                    muteList.add(i);
+                }
                 break;
             default:
                 logger.warning(String.format("Unhandled Payload type: %s", p.getPayloadType()));
