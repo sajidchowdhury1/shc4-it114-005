@@ -206,7 +206,7 @@ public class ChatPanel extends JPanel {
     public void clientHistory(){
         // variables needed for date and time
         // Link: https://www.javatpoint.com/java-get-current-date
-        DateTimeFormatter date = DateTimeFormatter.ofPattern("MM_dd_yyyy_HH_mm");
+        DateTimeFormatter date = DateTimeFormatter.ofPattern("MM_dd_yyyy_HH_mm_ss");
         LocalDateTime currentDateTime = LocalDateTime.now();
         try{
             FileWriter myFile = new FileWriter("chathistory(" + date.format(currentDateTime) + ").txt");

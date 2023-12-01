@@ -17,9 +17,17 @@ import javax.swing.ScrollPaneConstants;
 import CR.client.ClientUtils;
 import CR.client.ICardControls;
 
+// shc4 11/30/23 it114-005
+// imports for a list
+import java.util.List;
+import java.util.ArrayList;
+
 public class UserListPanel extends JPanel {
     JPanel userListArea;
     private static Logger logger = Logger.getLogger(UserListPanel.class.getName());
+
+    // shc4 11/30/23 it114-005
+    private List<String> userListofPeople = new ArrayList<String>();
 
     public UserListPanel(ICardControls controls) {
         super(new BorderLayout(10, 10));
@@ -63,11 +71,21 @@ public class UserListPanel extends JPanel {
     }
 
     protected void addUserListItem(long clientId, String clientName) {
+        // shc4 11/30/23 it114-005
+        // this is to add in list of connected people
+        collectingData(clientId, clientName);
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
         // shc4 11/29/23 it114-005
         // this formats usernames when they have html tags
+        // shc4 11/30/23 it114-005
+        // had support from Danny
+        boolean mute = checkMute(clientName);
+        if(mute){
+            clientName = clientName.substring(1);
+            clientName = "<b><font color=#808080>" + clientName + "</font></b>";
+        }
         JEditorPane textContainer = new JEditorPane("text/html", clientName);
         textContainer.setName(clientId + "");
         // sizes the panel to attempt to take up the width of the container
@@ -101,4 +119,46 @@ public class UserListPanel extends JPanel {
             userListArea.remove(c);
         }
     }
+
+    // shc4 
+    // this method is used to add those users into the list above
+    private void collectingData(Long id,String name){
+        String arrayFormat = name + ":" + id;
+        if(!userListofPeople.contains(arrayFormat)){
+            userListofPeople.add(arrayFormat);
+        }
+    }
+    // removes from list if someone disconnects or goes to another room
+    protected void removeFromList(Long id){
+        for(String i: userListofPeople){
+            if(i.contains(("" + id).trim())){
+                userListofPeople.remove(i);
+            }
+        }
+    }
+
+    // shc4 11/30/23 it114-005
+    // new method to check the contents of the component which is the clients
+    protected void updateUserList(List<String> muteList){
+        clearUserList();
+        for(String i: userListofPeople){
+            String clientName = i.split(":")[0].trim();
+            Long clientId = Long.parseLong(i.split(":")[1]);
+            for(String x: muteList){
+                if(x.equalsIgnoreCase(clientName)){
+                    clientName = "~" + clientName;
+                }
+            }
+            addUserListItem(clientId, clientName);
+        }
+    }
+
+    // had support from Danny
+    private boolean checkMute(String name){
+        if(name.contains("~")){
+            return true;
+        }
+        return false;
+    }
+
 }

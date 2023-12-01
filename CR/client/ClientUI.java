@@ -27,8 +27,7 @@ import CR.common.Constants;
 
 // shc4 11/29/23 it114-005
 // imports for array list to work with the muteList
-import java.util.List;
-//import java.util.ArrayList;
+//import java.util.List;
 
 public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     CardLayout card = null;// accessible so we can call next() and previous()
@@ -41,7 +40,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     private Hashtable<Long, String> userList = new Hashtable<Long, String>();
     // shc4 11/29/23 it114-005
     // mute list for the instance of client
-    private List<String> muteList;
+    //private List<String> muteList;
 
     private long myId = Constants.DEFAULT_CLIENT_ID;
     private JMenuBar menu;
@@ -186,7 +185,7 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
                 userList.put(clientId, clientName);
                 // shc4 11/29/23 it114-005
                 // this is where checkNames gets invoked
-                clientName = checkNames(clientName);
+                //clientName = checkNames(clientName);
                 chatPanel.addUserListItem(clientId, String.format("%s (%s)", clientName, clientId));
             }
         } else {
@@ -277,21 +276,26 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         chatPanel.clientHistory();
     }
 
+    
+    @Override
+    public void updateMuteStatus(){
+        
+    }
 
     // shc4 11/29/23 it114-005
     // method to check the name and see if its matches to mute
-    private String checkNames(String clientName){
-        System.out.println("testing to see if the method works");
+    /*private String checkNames(String clientName){
+        //System.out.println("testing to see if the method works");
         this.muteList = Client.INSTANCE.muteList;
-        System.out.println("will it print after this instance call");
+        //System.out.println("will it print after this instance call");
         for(String i: muteList){
-            System.out.println("test to see if mute list content works" + i);
+            //System.out.println("test to see if mute list content works" + i);
             if(i.trim().equalsIgnoreCase(clientName.trim())){
                 clientName = "<b><font color=#808080>" + clientName + "</font></b>";
-                System.out.println(clientName);
+                //System.out.println(clientName);
             }
         }
         return clientName;
-    }
+    }*/
 
 }
