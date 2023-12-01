@@ -219,4 +219,10 @@ public class ChatPanel extends JPanel {
             e.printStackTrace();
         }
     }
+
+    // shc4 12/1/23 it114-005
+    // this method will be used in client ui
+    public void updateUserListArea(List<String> muteList){
+        userListPanel.updateUserList(muteList);
+    }
 }

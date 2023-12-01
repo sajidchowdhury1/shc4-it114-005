@@ -256,6 +256,8 @@ public enum Client {
                         p.getClientName(),
                         p.getMessage()));
                 events.onClientConnect(p.getClientId(), p.getClientName(), p.getMessage());
+                // shc4 12/1/23 it114-005
+                //events.updateMuteStatus();
                 break;
             case DISCONNECT:
                 if (userList.containsKey(p.getClientId())) {
@@ -277,6 +279,7 @@ public enum Client {
                     userList.put(p.getClientId(), cp);
                 }
                 events.onSyncClient(p.getClientId(), p.getClientName());
+                //events.updateMuteStatus();
                 break;
             case MESSAGE:
                 System.out.println(String.format("%s: %s",
@@ -314,16 +317,26 @@ public enum Client {
             // this is to handle mute message and unmute message
             case MUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"red\">%s was muted</font></b>",p.getClientName()));
+                // shc4 12/1/23 it114-005
+                // this is going to update the status every time mute is done
+                events.updateMuteStatus();
                 break;
             case UNMUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"green\">%s was unmuted</font></b>",p.getClientName()));
+                // this is going to be update the statys every time unmute is done
+                events.updateMuteStatus();
                 break;
             // shc4 11/29/23
             // this handles the must list that comes in
             case MUTE_LIST:
+                // link: https://www.geeksforgeeks.org/list-clear-method-in-java-with-examples/
+                muteList.clear();
                 String[] names = p.getMessage().split(",");
                 for(String i: names){
-                    muteList.add(i);
+                    if(i.equals(" ")){
+                        continue;
+                    }
+                    muteList.add(i.trim());
                 }
                 break;
             default:

@@ -74,6 +74,8 @@ public class UserListPanel extends JPanel {
         // shc4 11/30/23 it114-005
         // this is to add in list of connected people
         collectingData(clientId, clientName);
+        System.out.println("Test 1: client name: " + clientName);
+
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
@@ -81,12 +83,17 @@ public class UserListPanel extends JPanel {
         // this formats usernames when they have html tags
         // shc4 11/30/23 it114-005
         // had support from Danny
-        boolean mute = checkMute(clientName);
+        /*boolean mute = false;
+        System.out.println("Test 2: client name: " + clientName);
+        System.out.println("Checking mute status test 1: " + mute);
+        mute = checkMute(clientName);
+        System.out.println("Checking mute status test 2: " + mute);
         if(mute){
             clientName = clientName.substring(1);
             clientName = "<b><font color=#808080>" + clientName + "</font></b>";
-        }
+        }*/
         JEditorPane textContainer = new JEditorPane("text/html", clientName);
+        
         textContainer.setName(clientId + "");
         // sizes the panel to attempt to take up the width of the container
         // and expand in height based on word wrapping
@@ -108,6 +115,8 @@ public class UserListPanel extends JPanel {
         for (Component c : cs) {
             if (c.getName().equals(clientId + "")) {
                 userListArea.remove(c);
+                // shc4 12/1/23 it114-005
+                removeFromList(clientId);
                 break;
             }
         }
@@ -120,16 +129,19 @@ public class UserListPanel extends JPanel {
         }
     }
 
-    // shc4 
+    // shc4 12/1/23 it114-005
     // this method is used to add those users into the list above
     private void collectingData(Long id,String name){
         String arrayFormat = name + ":" + id;
+        if(arrayFormat.contains("~") || arrayFormat.contains("<b>")){
+            return;
+        }
         if(!userListofPeople.contains(arrayFormat)){
             userListofPeople.add(arrayFormat);
         }
     }
     // removes from list if someone disconnects or goes to another room
-    protected void removeFromList(Long id){
+    private void removeFromList(Long id){
         for(String i: userListofPeople){
             if(i.contains(("" + id).trim())){
                 userListofPeople.remove(i);
@@ -140,25 +152,39 @@ public class UserListPanel extends JPanel {
     // shc4 11/30/23 it114-005
     // new method to check the contents of the component which is the clients
     protected void updateUserList(List<String> muteList){
-        clearUserList();
+        //System.out.println("test update user list");
+        for(String i: muteList){
+            System.out.println("contents of mutelist: " + i);
+        }
+        this.clearUserList();
+        //System.out.println("testing if this method runs after clear user list");
         for(String i: userListofPeople){
-            String clientName = i.split(":")[0].trim();
-            Long clientId = Long.parseLong(i.split(":")[1]);
-            for(String x: muteList){
-                if(x.equalsIgnoreCase(clientName)){
-                    clientName = "~" + clientName;
-                }
+            String clientName = i.split(":")[0].trim()/*.split(" ")[0].trim()*/;
+            //System.out.println("what is the client name on split: " + clientName);
+            Long clientId = Long.parseLong(i.split(":")[1].trim());
+            if(clientName.contains("~")){
+                clientName = clientName.substring(1);
             }
-            addUserListItem(clientId, clientName);
+            //System.out.println("what is the clientid name on split: " + clientId);
+            //System.out.println("I want to know if it works after these splits");
+            if(muteList.indexOf(clientName.trim().split(" ")[0].trim()) > -1){
+                clientName = "<b><font color=#808080>" + clientName + "</font></b>";
+                this.addUserListItem(clientId, clientName);
+                continue;
+                //System.out.println("client name in if condition: " + clientName);
+            }
+            //System.out.println("client name out of the if condition and out side of the mute loop: " + clientName);
+            this.addUserListItem(clientId, clientName);
+            //System.out.println("will it print of readding the users");
         }
     }
 
     // had support from Danny
-    private boolean checkMute(String name){
+    /*private boolean checkMute(String name){
         if(name.contains("~")){
             return true;
         }
         return false;
-    }
+    }*/
 
 }

@@ -247,10 +247,9 @@ public class ServerThread extends Thread {
     // method to send mute list to client
     // link: https://www.geeksforgeeks.org/java-string-join-examples/
     public void sendMuteList(){
-        String muteNameCommaList = "";
         Payload p = new Payload();
         p.setPayloadType(PayloadType.MUTE_LIST);
-        muteNameCommaList = String.join(",", muteList);
+        String muteNameCommaList = String.join(",", muteList);
         p.setMessage(muteNameCommaList);
         send(p);
     }
@@ -267,9 +266,10 @@ public class ServerThread extends Thread {
                 // this is going to open the saved file when they connect to the folder
                 openSavedMuteFile();
                 // sending mute list to client
-                if(muteList != null && !muteList.isEmpty()){
+                //sendMuteList();
+                /*if(muteList != null && !muteList.isEmpty()){
                     sendMuteList();
-                }
+                }*/
                 break;
             case DISCONNECT:
                 Room.disconnectClient(this, getCurrentRoom());
@@ -298,22 +298,22 @@ public class ServerThread extends Thread {
             case MUTE:
                 if(!muteList.contains(p.getClientName())){
                     muteList.add(p.getClientName());
+                    // sending muteList to client
+                    sendMuteList();
                     sendMuteUser(p.getClientName());
                     // this would send a message to the muted person
                     currentRoom.muteMessage(this, p.getClientName());
-                    // sending muteList to client
-                    sendMuteList();
                     // saves mute list names after someone is added
                     muteFile();
                 }
                 break;
             case UNMUTE:
                 muteList.remove(p.getClientName());
+                // sending mute list to client after unmuting
+                sendMuteList();
                 sendUnmuteUser(p.getClientName());
                 // this would send a message to an unmutted person
                 currentRoom.unmuteMessage(this, p.getClientName());
-                // sending mute list to client after unmuting
-                sendMuteList();
                 // saves the mute list name after someone is removed
                 muteFile();
                 break;
