@@ -247,9 +247,12 @@ public class ServerThread extends Thread {
     // method to send mute list to client
     // link: https://www.geeksforgeeks.org/java-string-join-examples/
     public void sendMuteList(){
+        String muteNameCommaList = " ";
         Payload p = new Payload();
         p.setPayloadType(PayloadType.MUTE_LIST);
-        String muteNameCommaList = String.join(",", muteList);
+        if(!muteList.isEmpty()){
+            muteNameCommaList = String.join(",", muteList);
+        }
         p.setMessage(muteNameCommaList);
         send(p);
     }
@@ -266,10 +269,17 @@ public class ServerThread extends Thread {
                 // this is going to open the saved file when they connect to the folder
                 openSavedMuteFile();
                 // sending mute list to client
-                //sendMuteList();
-                /*if(!muteList.isEmpty()){
+                try{
+                    // link: https://javahungry.blogspot.com/2020/10/java-delay.html
+                    // there was this weird issue where this method would not work properly
+                    // because openSavedMuteFile ran and after that method is over sendMuteList
+                    // could not send immediately so I looked into delayed the method some how
+                    // which was with threads
+                    Thread.sleep(2000);
                     sendMuteList();
-                }*/
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case DISCONNECT:
                 Room.disconnectClient(this, getCurrentRoom());
@@ -342,23 +352,23 @@ public class ServerThread extends Thread {
         // shows how files that already exist with the same name will open
         File muteFile = new File(this.getClientName() + "_mutelist.txt");
         // this will stop the code from wrong when the file does not exist
-        if(!muteFile.exists()){
-            return;
-        }
-        // Link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Scanner.html
-        try(Scanner scanFile = new Scanner(muteFile)){
-            String getNames = scanFile.nextLine();
-            String[] names = getNames.split(",");
-            for(String i: names){
-                muteList.add(i.trim());
+        if(muteFile.exists()){
+            // Link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Scanner.html
+            try(Scanner scanFile = new Scanner(muteFile)){
+                String getNames = scanFile.nextLine();
+                String[] names = getNames.split(",");
+                for(String i: names){
+                    muteList.add(i.trim());
+                }
+            }catch(FileNotFoundException e){
+                System.out.println("File issues");
+                e.printStackTrace();
+            }catch(Exception e){
+                System.out.println("Name array issues/others");
+                e.printStackTrace();
             }
-        }catch(FileNotFoundException e){
-            System.out.println("File issues");
-            e.printStackTrace();
-        }catch(Exception e){
-            System.out.println("Name array issues/others");
-            e.printStackTrace();
         }
+        
 
     }
 

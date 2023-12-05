@@ -225,4 +225,10 @@ public class ChatPanel extends JPanel {
     public void updateMuteStatus(String muteStatus, Long Id){
         userListPanel.updateMuteStatus(muteStatus, Id);
     }
+
+    // shc4 12/4/23 it114-005
+    // this method will update the last person who sent a message
+    public void updateMessageStatus(Long Id){
+        userListPanel.updateMessageStatus(Id);
+    }
 }

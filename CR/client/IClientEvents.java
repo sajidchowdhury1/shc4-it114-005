@@ -63,5 +63,8 @@ public interface IClientEvents {
     void onRoomJoin(String roomName);
     
     // shc4 11/30/23 it114-005
-    void updateMuteStatus(String muteStatus, Long Id);
+    void updateMuteStatus(String muteStatus, Long Id); 
+
+    // shc4 12/4/23 it114-005
+    void updateMessageStatus(Long id);
 }

@@ -122,11 +122,24 @@ public class UserListPanel extends JPanel {
             if(muteStatus.equals("mute") && i.getName().trim().equals(""+muteId)){
                 //((JEditorPane) i).setText("<b><font color=#808080>" + ((JEditorPane) i).getText() + "</font></b>");
                 i.setForeground(Color.GRAY);
-            }else if(muteStatus.equals("unmute")){
+                break;
+            }else if(muteStatus.equals("unmute") && i.getName().trim().equals(""+muteId)){
                 i.setForeground(Color.BLACK);
             }
         }
     }
 
+    // shc4 12/4/23 it114-005
+    // highlighting user that last sent a message
+    protected void updateMessageStatus(Long messageId){
+        Component[] clientList = userListArea.getComponents();
+        for(Component i: clientList){
+            if(i.getName().trim().equals("" + messageId)){
+                i.setForeground(Color.GREEN);
+            }else{
+                i.setForeground(Color.BLACK);
+            }
+        }
+    }
 
 }

@@ -279,4 +279,11 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         chatPanel.updateMuteStatus(muteStatus, Id);
     }
 
+    // shc4 12/4/23 it114-005
+    // this will be used in client to update the message status
+    @Override
+    public void updateMessageStatus(Long id){
+        chatPanel.updateMessageStatus(id);
+    }
+
 }

@@ -162,6 +162,8 @@ public enum Client {
 
                         logger.info("Debug Info: " + fromServer);
                         processPayload(fromServer);
+                        // shc4 12/4/23 it114-005
+                        updateStatus("mute");
 
                     }
                     logger.info("listenForServerPayload() loop exited");
@@ -256,7 +258,7 @@ public enum Client {
                 System.out.println("Mute list check");
                 events.updateMuteStatus(status, otherUser.getClientId());
             }
-            if(status.equals("unmute")){
+            if(status.equals("unmute") && !muteList.contains(otherUser.getClientName())){
                 events.updateMuteStatus(status, otherUser.getClientId());
             }
         }
@@ -307,6 +309,8 @@ public enum Client {
                         getClientNameById(p.getClientId()),
                         p.getMessage()));
                 events.onMessageReceive(p.getClientId(), p.getMessage());
+                // shc4 12/4/23 it114-005
+                events.updateMessageStatus(p.getClientId());
                 break;
             case CLIENT_ID:
                 if (myClientId == Constants.DEFAULT_CLIENT_ID) {
@@ -354,7 +358,6 @@ public enum Client {
                 muteList.clear();
                 String[] names = p.getMessage().split(",");
                 for(String i: names){
-                    System.out.println("mute name: " + i);
                     if(i.equals(" ")){
                         continue;
                     }
