@@ -77,8 +77,7 @@ public class UserListPanel extends JPanel {
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
-        // shc4 11/29/23 it114-005
-        // this formats usernames when they have html tags
+        
         JEditorPane textContainer = new JEditorPane("text/plain", clientName);
         
         textContainer.setName(clientId + "");
@@ -120,7 +119,7 @@ public class UserListPanel extends JPanel {
         Component[] clientList = userListArea.getComponents();
         for(Component i: clientList){
             if(muteStatus.equals("mute") && i.getName().trim().equals(""+muteId)){
-                //((JEditorPane) i).setText("<b><font color=#808080>" + ((JEditorPane) i).getText() + "</font></b>");
+                // color format was help from Danny
                 i.setForeground(Color.GRAY);
                 break;
             }else if(muteStatus.equals("unmute") && i.getName().trim().equals(""+muteId)){

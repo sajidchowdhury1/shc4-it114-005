@@ -93,11 +93,6 @@ public enum Client {
         return isConnected();
     }
 
-    /*protected void sendReadyStatus() throws IOException {
-        Payload p = new Payload();
-        p.setPayloadType(PayloadType.READY);
-        out.writeObject(p);
-    }*/
 
     public void sendListRooms(String query) throws IOException {
         Payload p = new Payload();
@@ -253,9 +248,7 @@ public enum Client {
         while(Users.hasNext()){
             Long value = Users.next();
             User otherUser = userList.get(value);
-            System.out.println("Client name: " + otherUser.getClientName() + " client id: " + otherUser.getClientId());
             if(status.equals("mute") && muteList.indexOf(otherUser.getClientName()) > -1){
-                System.out.println("Mute list check");
                 events.updateMuteStatus(status, otherUser.getClientId());
             }
             if(status.equals("unmute") && !muteList.contains(otherUser.getClientName())){

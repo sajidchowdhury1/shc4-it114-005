@@ -282,7 +282,7 @@ public class Room implements AutoCloseable {
                 sender.sendMessage(sender.getClientId(),String.format("<font color=#8B4000>Private Message: %s</font>", message));
                 for(ServerThread i: clients){
                     if(i.isMuted(sender.getClientName())){
-                        i.sendMessage(sender.getClientId(), String.format("<b><font color=\"red\">%s has muted you</font></b>", sender.getClientName()));
+                        sender.sendMessage(sender.getClientId(), String.format("<b><font color=\"red\">%s has muted you</font></b>", i.getClientName()));
                         continue;
                     }
                     if(i.getClientName().equals(userName) && i.getClientId() == userID){

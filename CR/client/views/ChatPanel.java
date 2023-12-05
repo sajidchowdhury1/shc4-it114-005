@@ -45,10 +45,6 @@ public class ChatPanel extends JPanel {
     private static Logger logger = Logger.getLogger(ChatPanel.class.getName());
     private JPanel chatArea = null;
     private UserListPanel userListPanel;
-    // shc4 11/28/23 it114-005
-    // Array list to collect the string of history
-    // had support from Danny
-    //private List<String> history = new ArrayList<String>();
 
     public ChatPanel(ICardControls controls) {
         super(new BorderLayout(10, 10));

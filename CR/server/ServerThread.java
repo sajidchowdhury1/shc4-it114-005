@@ -92,15 +92,6 @@ public class ServerThread extends Thread {
     }
 
     // send methods
-    // shc4 11/11/23 it114-005
-    // These payloads were given with the milestone2 prep
-    // sendReadyStatus would send a payload showing which client is ready and active 
-    /*public boolean sendReadyStatus(long clientId) {
-        Payload p = new Payload();
-        p.setPayloadType(PayloadType.READY);
-        p.setClientId(clientId);
-        return send(p);
-    }*/
 
     // shc4 11/11/23 it114-005
     // This one payload will be the name of the room

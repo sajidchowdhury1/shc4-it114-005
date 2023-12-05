@@ -178,9 +178,6 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
             if (!userList.containsKey(clientId)) {
                 logger.log(Level.INFO, String.format("Adding %s[%s]", clientName, clientId));
                 userList.put(clientId, clientName);
-                // shc4 11/29/23 it114-005
-                // this is where checkNames gets invoked
-                //clientName = checkNames(clientName, clientId);
                 chatPanel.addUserListItem(clientId, String.format("%s (%s)", clientName, clientId));
             }
         } else {
