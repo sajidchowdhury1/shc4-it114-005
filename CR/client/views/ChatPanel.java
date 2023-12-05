@@ -35,8 +35,8 @@ import CR.client.ICardControls;
 //import java.io.IOException;
 import java.io.FileWriter;
 // for make a chat history list
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 // for data and time
 import java.time.format.DateTimeFormatter;  
 import java.time.LocalDateTime;    
@@ -48,7 +48,7 @@ public class ChatPanel extends JPanel {
     // shc4 11/28/23 it114-005
     // Array list to collect the string of history
     // had support from Danny
-    private List<String> history = new ArrayList<String>();
+    //private List<String> history = new ArrayList<String>();
 
     public ChatPanel(ICardControls controls) {
         super(new BorderLayout(10, 10));
@@ -157,7 +157,6 @@ public class ChatPanel extends JPanel {
 
             @Override
             public void componentMoved(ComponentEvent e) {
-                // System.out.println("Moved to " + e.getComponent().getLocation());
             }
         });
     }
@@ -178,7 +177,7 @@ public class ChatPanel extends JPanel {
         JPanel content = chatArea;
         // shc4 11/28/23 it114-005
         // adding in string to a list
-        history.add(text);
+        //history.add(text);
         // add message
         // sch4 11/17/23 it114-005
         // link: https://docs.oracle.com/javase/8/docs/api/javax/swing/JEditorPane.html
@@ -204,14 +203,15 @@ public class ChatPanel extends JPanel {
     // new method to get information on a file for client
     // will work with button
     public void clientHistory(){
+        Component[] chat = chatArea.getComponents();
         // variables needed for date and time
         // Link: https://www.javatpoint.com/java-get-current-date
         DateTimeFormatter date = DateTimeFormatter.ofPattern("MM_dd_yyyy_HH_mm_ss");
         LocalDateTime currentDateTime = LocalDateTime.now();
         try{
-            FileWriter myFile = new FileWriter("chathistory(" + date.format(currentDateTime) + ").txt");
-            for(String i: history){
-                myFile.write("\n" + i);
+            FileWriter myFile = new FileWriter("chathistory(" + date.format(currentDateTime) + ").html");
+            for(Component i: chat){
+                myFile.write("<br>" + ((JEditorPane) i).getText() + "</br>");
             }
             myFile.close();
         }catch(Exception e){
@@ -222,7 +222,7 @@ public class ChatPanel extends JPanel {
 
     // shc4 12/1/23 it114-005
     // this method will be used in client ui
-    public void updateUserListArea(List<String> muteList){
-        userListPanel.updateUserList(muteList);
+    public void updateMuteStatus(String muteStatus, Long Id){
+        userListPanel.updateMuteStatus(muteStatus, Id);
     }
 }

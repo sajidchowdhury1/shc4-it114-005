@@ -18,6 +18,8 @@ import CR.common.RoomResultPayload;
 // import for array list
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 public enum Client {
     INSTANCE;
@@ -238,6 +240,28 @@ public enum Client {
         out.writeObject(p);
     }
 
+    // shc4 12/4/23 it114-005
+    private void updateStatus(String status){
+        // link: https://www.geeksforgeeks.org/how-to-iterate-through-hashtable-in-java/ (iterating hastable)
+        // link: https://docs.oracle.com/javase/8/docs/api/java/util/Hashtable.html
+        // link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Set.html
+        // link: https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html
+        Set<Long> ListId = userList.keySet();
+        Iterator<Long> Users = ListId.iterator(); 
+        while(Users.hasNext()){
+            Long value = Users.next();
+            User otherUser = userList.get(value);
+            System.out.println("Client name: " + otherUser.getClientName() + " client id: " + otherUser.getClientId());
+            if(status.equals("mute") && muteList.indexOf(otherUser.getClientName()) > -1){
+                System.out.println("Mute list check");
+                events.updateMuteStatus(status, otherUser.getClientId());
+            }
+            if(status.equals("unmute")){
+                events.updateMuteStatus(status, otherUser.getClientId());
+            }
+        }
+    }
+
     /**
      * Processes incoming payloads from ServerThread
      * 
@@ -256,8 +280,6 @@ public enum Client {
                         p.getClientName(),
                         p.getMessage()));
                 events.onClientConnect(p.getClientId(), p.getClientName(), p.getMessage());
-                // shc4 12/1/23 it114-005
-                //events.updateMuteStatus();
                 break;
             case DISCONNECT:
                 if (userList.containsKey(p.getClientId())) {
@@ -279,7 +301,6 @@ public enum Client {
                     userList.put(p.getClientId(), cp);
                 }
                 events.onSyncClient(p.getClientId(), p.getClientName());
-                //events.updateMuteStatus();
                 break;
             case MESSAGE:
                 System.out.println(String.format("%s: %s",
@@ -319,12 +340,12 @@ public enum Client {
                 events.onMessageReceive(-1, String.format("<b><font color=\"red\">%s was muted</font></b>",p.getClientName()));
                 // shc4 12/1/23 it114-005
                 // this is going to update the status every time mute is done
-                events.updateMuteStatus();
+                updateStatus("mute");
                 break;
             case UNMUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"green\">%s was unmuted</font></b>",p.getClientName()));
                 // this is going to be update the statys every time unmute is done
-                events.updateMuteStatus();
+                updateStatus("unmute");
                 break;
             // shc4 11/29/23
             // this handles the must list that comes in
@@ -333,6 +354,7 @@ public enum Client {
                 muteList.clear();
                 String[] names = p.getMessage().split(",");
                 for(String i: names){
+                    System.out.println("mute name: " + i);
                     if(i.equals(" ")){
                         continue;
                     }

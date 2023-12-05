@@ -25,9 +25,7 @@ import CR.client.views.RoomsPanel;
 import CR.client.views.UserInputPanel;
 import CR.common.Constants;
 
-// shc4 11/29/23 it114-005
-// imports for array list to work with the muteList
-import java.util.List;
+
 
 public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     CardLayout card = null;// accessible so we can call next() and previous()
@@ -38,9 +36,6 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     private Card currentCard = Card.CONNECT;
 
     private Hashtable<Long, String> userList = new Hashtable<Long, String>();
-    // shc4 11/29/23 it114-005
-    // mute list for the instance of client
-    private List<String> muteList;
 
     private long myId = Constants.DEFAULT_CLIENT_ID;
     private JMenuBar menu;
@@ -277,26 +272,11 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     }
 
     
+    // shc4 12/4/23 it114-005
+    // this will will take parameters and do the function from userlistpanel
     @Override
-    public void updateMuteStatus(){
-        this.muteList = Client.INSTANCE.muteList;
-        chatPanel.updateUserListArea(this.muteList);
+    public void updateMuteStatus(String muteStatus, Long Id){
+        chatPanel.updateMuteStatus(muteStatus, Id);
     }
-
-    // shc4 11/29/23 it114-005
-    // method to check the name and see if its matches to mute
-    /*private String checkNames(String clientName, long id){
-        //System.out.println("testing to see if the method works");
-        this.muteList = Client.INSTANCE.muteList;
-        //System.out.println("will it print after this instance call");
-        for(String i: muteList){
-            //System.out.println("test to see if mute list content works" + i);
-            if(i.trim().equalsIgnoreCase(clientName.trim())){
-                clientName = String.format("<b><font color=#808080>%s</font></b>", clientName);
-                
-            }
-        }
-        return clientName;
-    }*/
 
 }

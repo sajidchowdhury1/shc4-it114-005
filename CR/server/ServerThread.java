@@ -267,7 +267,7 @@ public class ServerThread extends Thread {
                 openSavedMuteFile();
                 // sending mute list to client
                 //sendMuteList();
-                /*if(muteList != null && !muteList.isEmpty()){
+                /*if(!muteList.isEmpty()){
                     sendMuteList();
                 }*/
                 break;
