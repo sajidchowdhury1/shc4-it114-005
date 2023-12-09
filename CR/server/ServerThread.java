@@ -16,6 +16,12 @@ import CR.common.RoomResultPayload;
 import java.util.ArrayList;
 import java.util.List;
 
+// shc4 11/28/23 it114-005
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.util.Scanner;
+
 /**
  * A server-side representation of a single client
  */
@@ -86,15 +92,6 @@ public class ServerThread extends Thread {
     }
 
     // send methods
-    // shc4 11/11/23 it114-005
-    // These payloads were given with the milestone2 prep
-    // sendReadyStatus would send a payload showing which client is ready and active 
-    public boolean sendReadyStatus(long clientId) {
-        Payload p = new Payload();
-        p.setPayloadType(PayloadType.READY);
-        p.setClientId(clientId);
-        return send(p);
-    }
 
     // shc4 11/11/23 it114-005
     // This one payload will be the name of the room
@@ -237,6 +234,21 @@ public class ServerThread extends Thread {
         return false;
     }
 
+    // shc4 11/29/23 it114-005
+    // method to send mute list to client
+    // link: https://www.geeksforgeeks.org/java-string-join-examples/
+    public void sendMuteList(){
+        String muteNameCommaList = " ";
+        Payload p = new Payload();
+        p.setPayloadType(PayloadType.MUTE_LIST);
+        if(!muteList.isEmpty()){
+            muteNameCommaList = String.join(",", muteList);
+        }
+        p.setMessage(muteNameCommaList);
+        send(p);
+    }
+
+
     // shc4 11/11/23 it114-005
     // this works with the different types of payload depending on what the user does
     // so it has connect, disconnect, and other payloads the is helpful for the user
@@ -244,6 +256,21 @@ public class ServerThread extends Thread {
         switch (p.getPayloadType()) {
             case CONNECT:
                 setClientName(p.getClientName());
+                // shc4 11/29/23 it114-005
+                // this is going to open the saved file when they connect to the folder
+                openSavedMuteFile();
+                // sending mute list to client
+                try{
+                    // link: https://javahungry.blogspot.com/2020/10/java-delay.html
+                    // there was this weird issue where this method would not work properly
+                    // because openSavedMuteFile ran and after that method is over sendMuteList
+                    // could not send immediately so I looked into delaying the method some how
+                    // which was with threads
+                    Thread.sleep(2000);
+                    sendMuteList();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case DISCONNECT:
                 Room.disconnectClient(this, getCurrentRoom());
@@ -272,20 +299,67 @@ public class ServerThread extends Thread {
             case MUTE:
                 if(!muteList.contains(p.getClientName())){
                     muteList.add(p.getClientName());
+                    // sending muteList to client
+                    sendMuteList();
                     sendMuteUser(p.getClientName());
+                    // this would send a message to the muted person
+                    currentRoom.muteMessage(this, p.getClientName());
+                    // saves mute list names after someone is added
+                    muteFile();
                 }
                 break;
             case UNMUTE:
                 muteList.remove(p.getClientName());
+                // sending mute list to client after unmuting
+                sendMuteList();
                 sendUnmuteUser(p.getClientName());
+                // this would send a message to an unmutted person
+                currentRoom.unmuteMessage(this, p.getClientName());
+                // saves the mute list name after someone is removed
+                muteFile();
                 break;
-            //case READY:
-                // ((GameRoom) currentRoom).setReady(myClientId);
-                //break;
             default:
                 break;
-
         }
+    }
+    // shc4 11/28/23 it114-005
+    // create mute list
+    private void muteFile(){
+        try(FileWriter muteFile = new FileWriter(this.getClientName() + "_mutelist.txt");){
+            muteFile.write(String.join(",", this.muteList));
+            muteFile.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    // shc4 11/29/23 it114-005
+    // opening saved files
+    private void openSavedMuteFile(){
+        // link: https://stackoverflow.com/questions/19702659/about-file-file-new-filepath
+        // shows how files that already exist with the same name will open
+        File muteFile = new File(this.getClientName() + "_mutelist.txt");
+        // this will stop the code from wrong when the file does not exist
+        if(muteFile.exists()){
+            // Link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Scanner.html
+            try(Scanner scanFile = new Scanner(muteFile)){
+                String getNames = scanFile.nextLine();
+                String[] names = getNames.split(",");
+                for(String i: names){
+                    muteList.add(i.trim());
+                }
+            }catch(FileNotFoundException e){
+                System.out.println("File issues");
+                e.printStackTrace();
+            }catch(Exception e){
+                System.out.println("Name array issues/others");
+                e.printStackTrace();
+            }
+        }
+        
 
     }
 

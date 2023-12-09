@@ -282,7 +282,7 @@ public class Room implements AutoCloseable {
                 sender.sendMessage(sender.getClientId(),String.format("<font color=#8B4000>Private Message: %s</font>", message));
                 for(ServerThread i: clients){
                     if(i.isMuted(sender.getClientName())){
-                        sender.sendMessage(sender.getClientId(), "<b><font color=\"red\">Message was muted</font></b>");
+                        sender.sendMessage(sender.getClientId(), String.format("<b><font color=\"red\">%s has muted you</font></b>", i.getClientName()));
                         continue;
                     }
                     if(i.getClientName().equals(userName) && i.getClientId() == userID){
@@ -557,6 +557,26 @@ public class Room implements AutoCloseable {
 			return message;
 		}
 		return message;
+    }
+
+    
+    // shc4 11/29/23 it114-005
+    // mute message that is going to be used in server thread
+    protected void muteMessage(ServerThread muter, String mutedName){
+        for(ServerThread i: clients){
+            if(i.getClientName().equals(mutedName)){
+                i.sendMessage(-1, String.format("<b><font color=\"red\">%s has muted you</font></b>", muter.getClientName()));
+            }
+        }
+    }
+    // shc4 11/29/23 it114-005
+    // unmute message that is going to be used in server thread
+    protected void unmuteMessage(ServerThread muter, String mutedName){
+        for(ServerThread i: clients){
+            if(i.getClientName().equals(mutedName)){
+                i.sendMessage(-1, String.format("<b><font color=\"green\">%s has unmuted you</font></b>", muter.getClientName()));
+            }
+        }
     }
 
     protected synchronized void sendConnectionStatus(ServerThread sender, boolean isConnected) {

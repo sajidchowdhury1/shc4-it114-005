@@ -25,6 +25,8 @@ import CR.client.views.RoomsPanel;
 import CR.client.views.UserInputPanel;
 import CR.common.Constants;
 
+
+
 public class ClientUI extends JFrame implements IClientEvents, ICardControls {
     CardLayout card = null;// accessible so we can call next() and previous()
     Container container;// accessible to be passed to card methods
@@ -258,4 +260,76 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
             chatPanel.addText("Joined room " + roomName);
         }
     }
+
+    // shc4 11/28/23 it114-005
+    // this method is to work with the menu button to export the chat history
+    @Override
+    public void export(){
+        chatPanel.clientHistory();
+    }
+
+    
+    // shc4 12/4/23 it114-005
+    // this will will take parameters and do the function from userlistpanel
+    @Override
+    public void updateMuteStatus(String muteStatus, Long Id){
+        chatPanel.updateMuteStatus(muteStatus, Id);
+    }
+
+    // shc4 12/4/23 it114-005
+    // this will be used in client to update the message status
+    @Override
+    public void updateMessageStatus(Long id){
+        chatPanel.updateMessageStatus(id);
+    }
+
+    // shc4 12/6/23 it114-005
+    // button used to do flip from menu
+    @Override
+    public void flip(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/flip");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // shc4 12/6/23 it114-005
+    // method to do /roll 2d6
+    @Override
+    public void rollD(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/roll 2d6");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // shc4 12/6/23 it114-005
+    // method to do /roll 6
+    @Override
+    public void roll(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/roll 6");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    /*public void infoUser(){
+        String message = "INSTRUCTION:\n\nTools: /flip, /roll #, /roll #d#, /mute (name), /unmute (name), and formatting tools" +
+        "\n\nFlip: when doing /flip it will do a coin toss of heads or tails" + 
+        "\n\nRoll: you can do /roll # (any number) to do a roll of 1 to that many sides and there is /roll #(number of dice)d#(number of side)"+
+        " and this will give a result of the total from those dices and their sides" +
+        "\n\nMute and Unmute: when doing /mute (name) it will mute all users with that name and /unmute (name) will unmute those name";
+        chatPanel.addText(String.format("%s: %s", "Server", message));
+        
+    }*/
+
 }

@@ -61,11 +61,10 @@ public interface IClientEvents {
      * @param roomName
      */
     void onRoomJoin(String roomName);
+    
+    // shc4 11/30/23 it114-005
+    void updateMuteStatus(String muteStatus, Long Id); 
 
-
-    //shc4 11/17/23 it114-005
-    /**
-     * Recieves the name of the person who is muted
-     */
-    //void isMute(String name); 
+    // shc4 12/4/23 it114-005
+    void updateMessageStatus(Long id);
 }

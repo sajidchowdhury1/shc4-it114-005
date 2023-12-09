@@ -28,6 +28,19 @@ import CR.client.Card;
 import CR.client.ClientUtils;
 import CR.client.ICardControls;
 
+// shc4 11/27/23 it114-005
+// import for file systems
+// link: https://www.w3schools.com/java/java_files_create.asp
+//import java.io.File;
+//import java.io.IOException;
+import java.io.FileWriter;
+// for make a chat history list
+//import java.util.ArrayList;
+//import java.util.List;
+// for data and time
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime;    
+
 public class ChatPanel extends JPanel {
     private static Logger logger = Logger.getLogger(ChatPanel.class.getName());
     private JPanel chatArea = null;
@@ -112,6 +125,8 @@ public class ChatPanel extends JPanel {
                 if (chatArea.isVisible()) {
                     chatArea.revalidate();
                     chatArea.repaint();
+                    //JScrollBar vertical = ((JScrollPane) chatArea.getParent().getParent()).getVerticalScrollBar();
+                    //vertical.setValue(vertical.getMaximum());
                 }
             }
 
@@ -140,7 +155,6 @@ public class ChatPanel extends JPanel {
 
             @Override
             public void componentMoved(ComponentEvent e) {
-                // System.out.println("Moved to " + e.getComponent().getLocation());
             }
         });
     }
@@ -159,6 +173,9 @@ public class ChatPanel extends JPanel {
 
     public void addText(String text) {
         JPanel content = chatArea;
+        // shc4 11/28/23 it114-005
+        // adding in string to a list
+        //history.add(text);
         // add message
         // sch4 11/17/23 it114-005
         // link: https://docs.oracle.com/javase/8/docs/api/javax/swing/JEditorPane.html
@@ -178,5 +195,38 @@ public class ChatPanel extends JPanel {
         // scroll down on new message
         JScrollBar vertical = ((JScrollPane) chatArea.getParent().getParent()).getVerticalScrollBar();
         vertical.setValue(vertical.getMaximum());
+    }
+
+    // shc4 11/27/23 it114-005
+    // new method to get information on a file for client
+    // will work with button
+    public void clientHistory(){
+        Component[] chat = chatArea.getComponents();
+        // variables needed for date and time
+        // Link: https://www.javatpoint.com/java-get-current-date
+        DateTimeFormatter date = DateTimeFormatter.ofPattern("MM_dd_yyyy_HH_mm_ss");
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        try{
+            FileWriter myFile = new FileWriter("chathistory(" + date.format(currentDateTime) + ").html");
+            for(Component i: chat){
+                myFile.write("<br>" + ((JEditorPane) i).getText() + "</br>");
+            }
+            myFile.close();
+        }catch(Exception e){
+            System.out.println("problem has occured");
+            e.printStackTrace();
+        }
+    }
+
+    // shc4 12/1/23 it114-005
+    // this method will be used in client ui
+    public void updateMuteStatus(String muteStatus, Long Id){
+        userListPanel.updateMuteStatus(muteStatus, Id);
+    }
+
+    // shc4 12/4/23 it114-005
+    // this method will update the last person who sent a message
+    public void updateMessageStatus(Long Id){
+        userListPanel.updateMessageStatus(Id);
     }
 }

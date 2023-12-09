@@ -14,6 +14,13 @@ import CR.common.Payload;
 import CR.common.PayloadType;
 import CR.common.RoomResultPayload;
 
+// shc4 11/29/23 it114-005
+// import for array list
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+
 public enum Client {
     INSTANCE;
 
@@ -33,10 +40,13 @@ public enum Client {
     private Hashtable<Long, User> userList = new Hashtable<Long, User>();
     // shc4 11/18/23 it114-005
     // commends to handle mute and unmute commends
-    private final static String COMMEND = "/";
+    private final static String COMMAND = "/";
     private final static String MUTEUSER = "mute";
     private final static String UNMUTEUSER = "unmute";
 
+    // shc4 11/29/23 it114-005
+    // this is the mute list within clients
+    protected List<String> muteList = new ArrayList<String>();
 
     private static IClientEvents events;
 
@@ -83,11 +93,6 @@ public enum Client {
         return isConnected();
     }
 
-    protected void sendReadyStatus() throws IOException {
-        Payload p = new Payload();
-        p.setPayloadType(PayloadType.READY);
-        out.writeObject(p);
-    }
 
     public void sendListRooms(String query) throws IOException {
         Payload p = new Payload();
@@ -152,6 +157,8 @@ public enum Client {
 
                         logger.info("Debug Info: " + fromServer);
                         processPayload(fromServer);
+                        // shc4 12/4/23 it114-005
+                        updateStatus("mute");
 
                     }
                     logger.info("listenForServerPayload() loop exited");
@@ -181,7 +188,7 @@ public enum Client {
     private boolean processCommend(String commend){
         boolean isCommend = false;
         
-        if(commend.startsWith(COMMEND)){
+        if(commend.startsWith(COMMAND)){
             try{
                 isCommend = true;
                 String check = commend.substring(1).trim().split(" ")[0]; // mute or unmute commend
@@ -230,6 +237,26 @@ public enum Client {
         out.writeObject(p);
     }
 
+    // shc4 12/4/23 it114-005
+    private void updateStatus(String status){
+        // link: https://www.geeksforgeeks.org/how-to-iterate-through-hashtable-in-java/ (iterating hastable)
+        // link: https://docs.oracle.com/javase/8/docs/api/java/util/Hashtable.html
+        // link: https://docs.oracle.com/javase%2F7%2Fdocs%2Fapi%2F%2F/java/util/Set.html
+        // link: https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html
+        Set<Long> ListId = userList.keySet();
+        Iterator<Long> Users = ListId.iterator(); 
+        while(Users.hasNext()){
+            Long value = Users.next();
+            User otherUser = userList.get(value);
+            if(status.equals("mute") && muteList.indexOf(otherUser.getClientName()) > -1){
+                events.updateMuteStatus(status, otherUser.getClientId());
+            }
+            if(status.equals("unmute") && !muteList.contains(otherUser.getClientName())){
+                events.updateMuteStatus(status, otherUser.getClientId());
+            }
+        }
+    }
+
     /**
      * Processes incoming payloads from ServerThread
      * 
@@ -275,6 +302,8 @@ public enum Client {
                         getClientNameById(p.getClientId()),
                         p.getMessage()));
                 events.onMessageReceive(p.getClientId(), p.getMessage());
+                // shc4 12/4/23 it114-005
+                events.updateMessageStatus(p.getClientId());
                 break;
             case CLIENT_ID:
                 if (myClientId == Constants.DEFAULT_CLIENT_ID) {
@@ -306,9 +335,27 @@ public enum Client {
             // this is to handle mute message and unmute message
             case MUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"red\">%s was muted</font></b>",p.getClientName()));
+                // shc4 12/1/23 it114-005
+                // this is going to update the status every time mute is done
+                updateStatus("mute");
                 break;
             case UNMUTE:
                 events.onMessageReceive(-1, String.format("<b><font color=\"green\">%s was unmuted</font></b>",p.getClientName()));
+                // this is going to be update the statys every time unmute is done
+                updateStatus("unmute");
+                break;
+            // shc4 11/29/23
+            // this handles the must list that comes in
+            case MUTE_LIST:
+                // link: https://www.geeksforgeeks.org/list-clear-method-in-java-with-examples/
+                muteList.clear();
+                String[] names = p.getMessage().split(",");
+                for(String i: names){
+                    if(i.equals(" ")){
+                        continue;
+                    }
+                    muteList.add(i.trim());
+                }
                 break;
             default:
                 logger.warning(String.format("Unhandled Payload type: %s", p.getPayloadType()));

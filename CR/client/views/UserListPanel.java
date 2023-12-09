@@ -17,9 +17,18 @@ import javax.swing.ScrollPaneConstants;
 import CR.client.ClientUtils;
 import CR.client.ICardControls;
 
+// shc4 11/30/23 it114-005
+import java.awt.Color;
+// imports for a list
+//import java.util.List;
+//import java.util.ArrayList;
+
 public class UserListPanel extends JPanel {
     JPanel userListArea;
     private static Logger logger = Logger.getLogger(UserListPanel.class.getName());
+
+    // shc4 11/30/23 it114-005
+    //protected List<String> userListofPeople = new ArrayList<String>(); // people who are connected
 
     public UserListPanel(ICardControls controls) {
         super(new BorderLayout(10, 10));
@@ -63,10 +72,14 @@ public class UserListPanel extends JPanel {
     }
 
     protected void addUserListItem(long clientId, String clientName) {
+        System.out.println("Test 1: client name: " + clientName);
+
         logger.log(Level.INFO, "Adding user to list: " + clientName);
         JPanel content = userListArea;
         logger.log(Level.INFO, "Userlist: " + content.getSize());
+        
         JEditorPane textContainer = new JEditorPane("text/plain", clientName);
+        
         textContainer.setName(clientId + "");
         // sizes the panel to attempt to take up the width of the container
         // and expand in height based on word wrapping
@@ -99,4 +112,33 @@ public class UserListPanel extends JPanel {
             userListArea.remove(c);
         }
     }
+
+    // shc4 12/4/23 it114-005
+    // method to update the mute status
+    protected void updateMuteStatus(String muteStatus, Long muteId){
+        Component[] clientList = userListArea.getComponents();
+        for(Component i: clientList){
+            if(muteStatus.equals("mute") && i.getName().trim().equals(""+muteId)){
+                // color format was help from Danny
+                i.setForeground(Color.GRAY);
+                break;
+            }else if(muteStatus.equals("unmute") && i.getName().trim().equals(""+muteId)){
+                i.setForeground(Color.BLACK);
+            }
+        }
+    }
+
+    // shc4 12/4/23 it114-005
+    // highlighting user that last sent a message
+    protected void updateMessageStatus(Long messageId){
+        Component[] clientList = userListArea.getComponents();
+        for(Component i: clientList){
+            if(i.getName().trim().equals("" + messageId)){
+                i.setForeground(Color.GREEN);
+            }else{
+                i.setForeground(Color.BLACK);
+            }
+        }
+    }
+
 }
