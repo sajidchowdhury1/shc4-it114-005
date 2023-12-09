@@ -264,7 +264,7 @@ public class ServerThread extends Thread {
                     // link: https://javahungry.blogspot.com/2020/10/java-delay.html
                     // there was this weird issue where this method would not work properly
                     // because openSavedMuteFile ran and after that method is over sendMuteList
-                    // could not send immediately so I looked into delayed the method some how
+                    // could not send immediately so I looked into delaying the method some how
                     // which was with threads
                     Thread.sleep(2000);
                     sendMuteList();

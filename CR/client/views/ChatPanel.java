@@ -125,6 +125,8 @@ public class ChatPanel extends JPanel {
                 if (chatArea.isVisible()) {
                     chatArea.revalidate();
                     chatArea.repaint();
+                    //JScrollBar vertical = ((JScrollPane) chatArea.getParent().getParent()).getVerticalScrollBar();
+                    //vertical.setValue(vertical.getMaximum());
                 }
             }
 

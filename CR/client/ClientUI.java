@@ -283,4 +283,53 @@ public class ClientUI extends JFrame implements IClientEvents, ICardControls {
         chatPanel.updateMessageStatus(id);
     }
 
+    // shc4 12/6/23 it114-005
+    // button used to do flip from menu
+    @Override
+    public void flip(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/flip");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // shc4 12/6/23 it114-005
+    // method to do /roll 2d6
+    @Override
+    public void rollD(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/roll 2d6");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    // shc4 12/6/23 it114-005
+    // method to do /roll 6
+    @Override
+    public void roll(){
+        try{
+            if(Client.INSTANCE.isConnected()){
+                Client.INSTANCE.sendMessage("/roll 6");
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    /*public void infoUser(){
+        String message = "INSTRUCTION:\n\nTools: /flip, /roll #, /roll #d#, /mute (name), /unmute (name), and formatting tools" +
+        "\n\nFlip: when doing /flip it will do a coin toss of heads or tails" + 
+        "\n\nRoll: you can do /roll # (any number) to do a roll of 1 to that many sides and there is /roll #(number of dice)d#(number of side)"+
+        " and this will give a result of the total from those dices and their sides" +
+        "\n\nMute and Unmute: when doing /mute (name) it will mute all users with that name and /unmute (name) will unmute those name";
+        chatPanel.addText(String.format("%s: %s", "Server", message));
+        
+    }*/
+
 }

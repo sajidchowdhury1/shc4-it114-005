@@ -40,7 +40,7 @@ public enum Client {
     private Hashtable<Long, User> userList = new Hashtable<Long, User>();
     // shc4 11/18/23 it114-005
     // commends to handle mute and unmute commends
-    private final static String COMMEND = "/";
+    private final static String COMMAND = "/";
     private final static String MUTEUSER = "mute";
     private final static String UNMUTEUSER = "unmute";
 
@@ -188,7 +188,7 @@ public enum Client {
     private boolean processCommend(String commend){
         boolean isCommend = false;
         
-        if(commend.startsWith(COMMEND)){
+        if(commend.startsWith(COMMAND)){
             try{
                 isCommend = true;
                 String check = commend.substring(1).trim().split(" ")[0]; // mute or unmute commend
