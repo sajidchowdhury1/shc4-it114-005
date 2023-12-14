@@ -10,4 +10,4 @@ Milestone 4: https://github.com/sajidchowdhury1/shc4-it114-005/blob/main/CR/mile
 
 Demo Video: https://youtu.be/Qd2lmdXTWlk
 
-Proposal: 
+Proposal: https://github.com/sajidchowdhury1/shc4-it114-005/blob/main/proposal.md
